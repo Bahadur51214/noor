@@ -1,7 +1,7 @@
 import { productService } from "@/services/product.service"
 import { notFound } from "next/navigation"
 import { Metadata } from "next"
-import { Truck, ShieldCheck, RefreshCw } from "lucide-react"
+import { Truck, Banknote, RefreshCw } from "lucide-react"
 import { AddToCartButton } from "./add-to-cart-button"
 import { ProductImageGallery } from "@/components/store/product/product-image-gallery"
 import { ProductDescription } from "@/components/store/product/product-description"
@@ -120,8 +120,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <span className="text-xs uppercase tracking-wider text-gray-500">Fast Delivery</span>
             </div>
             <div className="flex flex-col items-center text-center gap-2">
-              <ShieldCheck className="w-6 h-6 text-[#C9A96E]" />
-              <span className="text-xs uppercase tracking-wider text-gray-500">1 Year Warranty</span>
+              <Banknote className="w-6 h-6 text-[#C9A96E]" />
+              <span className="text-xs uppercase tracking-wider text-gray-500">Cash on Delivery</span>
             </div>
             <div className="flex flex-col items-center text-center gap-2">
               <RefreshCw className="w-6 h-6 text-[#C9A96E]" />
