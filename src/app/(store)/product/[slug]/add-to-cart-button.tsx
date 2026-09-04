@@ -39,7 +39,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
 
   const handleBuyNow = () => {
     clearCart()
-    addItem(cartItem)
+    addItem(cartItem, false)
     toast.success(`${product.name} added to cart`)
     router.push("/checkout")
   }
