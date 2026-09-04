@@ -107,11 +107,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
 
           <div className="mb-8">
-            <ProductDescription description={product.description} />
+            <AddToCartButton product={product as any} />
           </div>
 
           <div className="mb-8">
-            <AddToCartButton product={product as any} />
+            <ProductDescription description={product.description} />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-6 border-t border-b border-gray-100 mb-8">
