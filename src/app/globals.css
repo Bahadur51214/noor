@@ -134,6 +134,24 @@
   }
 }
 
+/* ---- Announcement Bar Marquee ---- */
+.announcement-bar .marquee-track {
+  animation: noor-marquee 30s linear infinite;
+}
+
+.announcement-bar:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes noor-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 /* ---- Admin Layout ---- */
 @layer components {
   .admin-sidebar {
