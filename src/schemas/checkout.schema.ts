@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { PaymentMethod } from '@/types/order';
+import { isValidPakistaniPhone } from '@/lib/utils';
 
 export const checkoutFormSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
-  phone: z.string().regex(/^03\d{9}$/, "Phone number must be valid Pakistani format (e.g., 03001234567)"),
+  phone: z.string().refine(isValidPakistaniPhone, "Enter a valid Pakistani number (e.g., 0348 4865913 or +92 348 4865913)"),
   email: z.string().email("Invalid email address").optional().or(z.literal('')),
   city: z.string().min(2, "City is required"),
   area: z.string().min(2, "Area is required"),

@@ -3,6 +3,7 @@
 import { checkoutFormSchema, paymentReferenceSchema } from '@/schemas/checkout.schema'
 import { orderService } from '@/services/order.service'
 import { z } from 'zod'
+import { normalizePakistaniPhone } from '@/lib/utils'
 import { headers } from 'next/headers'
 import { rateLimit } from '@/lib/rate-limit'
 
@@ -47,7 +48,7 @@ export async function submitCheckout(
       paymentMethod: validatedData.paymentMethod,
       customer: {
         name: validatedData.fullName,
-        phone: validatedData.phone,
+        phone: normalizePakistaniPhone(validatedData.phone),
         email: validatedData.email || null,
         city: validatedData.city,
         area: validatedData.area,
@@ -77,7 +78,7 @@ export async function trackOrderAction(orderNumber: string, phone: string) {
       return { success: false, error: 'Too many requests. Please try again later.' }
     }
 
-    const order = await orderService.trackOrder(orderNumber, phone)
+    const order = await orderService.trackOrder(orderNumber, normalizePakistaniPhone(phone))
     if (!order) {
       return { success: false, error: 'Order not found or phone number does not match.' }
     }

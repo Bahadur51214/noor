@@ -57,7 +57,19 @@ export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export function normalizePakistaniPhone(phone: string) {
+  let cleaned = phone.replace(/[-\s().]/g, '');
+  if (cleaned.startsWith('+92')) {
+    cleaned = '0' + cleaned.slice(3);
+  } else if (cleaned.startsWith('0092')) {
+    cleaned = '0' + cleaned.slice(4);
+  } else if (cleaned.startsWith('92')) {
+    cleaned = '0' + cleaned.slice(2);
+  }
+  return cleaned.replace(/^0{2,}/, '0');
+}
+
 export function isValidPakistaniPhone(phone: string) {
-  const cleaned = phone.replace(/[-\s]/g, '');
-  return /^03\d{9}$/.test(cleaned);
+  const normalized = normalizePakistaniPhone(phone);
+  return /^03\d{9}$/.test(normalized);
 }
