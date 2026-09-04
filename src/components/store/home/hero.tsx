@@ -27,26 +27,26 @@ export function Hero() {
   }, [])
 
   return (
-    <section className="relative w-full aspect-video min-h-[300px] max-h-[80vh] overflow-hidden bg-[#0D0D0D] flex items-center justify-center">
+    <section className="relative w-full aspect-[16/9] overflow-hidden bg-[#0D0D0D] flex items-center justify-center">
       {/* Background */}
       <div className="absolute inset-0">
         <Image
           src={image}
           alt="Luxury Watch"
           fill
-          className="object-cover opacity-60"
+          className="object-cover object-center opacity-60"
           priority
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D]/90 via-[#0D0D0D]/40 to-transparent" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 max-w-4xl mx-auto mt-16">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-4 max-w-4xl mx-auto">
         <motion.span
           initial={{ opacity: 0, y: 20 }}
           animate={ready ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-[#C9A96E] uppercase tracking-[0.3em] text-sm font-medium mb-6 block"
+          className="text-[#C9A96E] uppercase tracking-[0.25em] text-[10px] sm:text-xs md:text-sm font-medium mb-1.5 sm:mb-4 block"
         >
           Noor Exclusive
         </motion.span>
@@ -55,7 +55,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={ready ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-          className="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-8 tracking-wide leading-tight"
+          className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-2 sm:mb-6 tracking-wide leading-tight"
         >
           {title}
         </motion.h1>
@@ -65,7 +65,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={ready ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-            className="text-white/80 text-lg md:text-xl mb-8 max-w-2xl"
+            className="text-white/80 text-xs sm:text-base md:text-xl mb-3 sm:mb-6 max-w-2xl"
           >
             {subtitle}
           </motion.p>
@@ -76,7 +76,7 @@ export function Hero() {
           animate={ready ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
         >
-          <Button asChild size="lg" className="bg-[#C9A96E] hover:bg-[#b0925c] text-white px-10 py-6 text-base tracking-widest uppercase transition-all duration-300 rounded-none">
+          <Button asChild size="lg" className="bg-[#C9A96E] hover:bg-[#b0925c] text-white px-5 py-2.5 sm:px-10 sm:py-6 text-xs sm:text-base tracking-widest uppercase transition-all duration-300 rounded-none h-auto">
             <Link href="/shop">{cta}</Link>
           </Button>
         </motion.div>
