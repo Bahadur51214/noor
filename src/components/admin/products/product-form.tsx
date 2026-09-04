@@ -113,6 +113,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     try {
       const cleanData = {
         ...data,
+        categoryId: data.categoryId ? data.categoryId : null,
         salePrice:
           data.salePrice === "" ? undefined : data.salePrice || undefined,
         costPrice:
