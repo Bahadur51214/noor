@@ -27,7 +27,7 @@ export function Hero() {
   }, [])
 
   return (
-    <section className="relative h-[90vh] min-h-[600px] w-full overflow-hidden bg-[#0D0D0D] flex items-center justify-center">
+    <section className="relative w-full aspect-video min-h-[300px] max-h-[80vh] overflow-hidden bg-[#0D0D0D] flex items-center justify-center">
       {/* Background */}
       <div className="absolute inset-0">
         <Image
@@ -36,6 +36,7 @@ export function Hero() {
           fill
           className="object-cover opacity-60"
           priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D]/90 via-[#0D0D0D]/40 to-transparent" />
       </div>
