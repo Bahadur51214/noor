@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* ---- NOOR Brand Colors ---- */
+  --color-noor-black: #0D0D0D;
+  --color-noor-ivory: #F7F4EF;
+  --color-noor-gold: #C9A96E;
+  --color-noor-gold-light: #D4BA8A;
+  --color-noor-gold-dark: #B08D4F;
+  --color-noor-gray-50: #FAF9F7;
+  --color-noor-gray-100: #F0EDE8;
+  --color-noor-gray-200: #E0DCD5;
+  --color-noor-gray-300: #C4BFB5;
+  --color-noor-gray-400: #9E978C;
+  --color-noor-gray-500: #6B655C;
+  --color-noor-gray-600: #3D3A35;
+  --color-noor-gray-700: #262420;
+
+  /* ---- shadcn/ui Theme Variables ---- */
+  --color-background: var(--color-noor-ivory);
+  --color-foreground: var(--color-noor-black);
+  --color-card: #FFFFFF;
+  --color-card-foreground: var(--color-noor-black);
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: var(--color-noor-black);
+  --color-primary: var(--color-noor-black);
+  --color-primary-foreground: var(--color-noor-ivory);
+  --color-secondary: var(--color-noor-gray-100);
+  --color-secondary-foreground: var(--color-noor-black);
+  --color-muted: var(--color-noor-gray-100);
+  --color-muted-foreground: var(--color-noor-gray-500);
+  --color-accent: var(--color-noor-gold);
+  --color-accent-foreground: var(--color-noor-black);
+  --color-destructive: #DC2626;
+  --color-destructive-foreground: #FFFFFF;
+  --color-border: var(--color-noor-gray-200);
+  --color-input: var(--color-noor-gray-200);
+  --color-ring: var(--color-noor-gold);
+
+  /* ---- Spacing & Radius ---- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  /* ---- Fonts ---- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, monospace;
+}
+
+/* ---- Base Styles ---- */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-serif);
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    outline: 2px solid var(--color-noor-gold);
+    outline-offset: 2px;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: var(--color-noor-gold);
+    color: var(--color-noor-black);
+  }
+}
+
+/* ---- Utility Classes ---- */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .font-display {
+    font-family: var(--font-serif);
+  }
+
+  .tracking-brand {
+    letter-spacing: 0.2em;
+  }
+
+  .tracking-wide-brand {
+    letter-spacing: 0.3em;
+  }
+
+  /* Hide scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Gold gradient text */
+  .text-gold-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--color-noor-gold-dark),
+      var(--color-noor-gold),
+      var(--color-noor-gold-light)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* ---- Admin Layout ---- */
+@layer components {
+  .admin-sidebar {
+    background-color: var(--color-noor-black);
+    color: var(--color-noor-ivory);
+  }
+
+  .admin-sidebar a {
+    transition: background-color 0.15s ease;
+  }
+
+  .admin-sidebar a:hover {
+    background-color: rgba(201, 169, 110, 0.1);
+  }
+
+  .admin-sidebar a.active {
+    background-color: rgba(201, 169, 110, 0.15);
+    border-left: 3px solid var(--color-noor-gold);
+  }
+}

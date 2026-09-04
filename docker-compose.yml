@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: noor-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: noor
+      POSTGRES_USER: noor_user
+      POSTGRES_PASSWORD: noor_dev_password
+    volumes:
+      - noor_pgdata:/var/lib/postgresql/data
+
+volumes:
+  noor_pgdata:
