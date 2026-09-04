@@ -20,6 +20,11 @@ const baseProductSchema = z.object({
   newArrival: z.boolean().default(false),
   seoTitle: z.string().optional().nullable(),
   seoDescription: z.string().optional().nullable(),
+  images: z.array(z.object({
+    url: z.string().min(1, "Image URL is required"),
+    alt: z.string().optional().nullable(),
+    sortOrder: z.number().optional().nullable(),
+  })).default([]),
 });
 
 export const productFormSchema = baseProductSchema.refine(
