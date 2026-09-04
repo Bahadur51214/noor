@@ -5,10 +5,14 @@ import Link from "next/link"
 import Image from "next/image"
 import { getPublicStoreSettings } from "@/actions/public.actions"
 
-const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=2000&auto=format&fit=crop"
+export const DEFAULT_HERO_IMAGE = "https://res.cloudinary.com/tlbuabtl/image/upload/v1788517715/ChatGPT_Image_Sep_4_2026_03_02_23_PM.png"
 
-export function Hero() {
-  const [image, setImage] = useState(FALLBACK_IMAGE)
+interface HeroProps {
+  initialImage?: string
+}
+
+export function Hero({ initialImage }: HeroProps) {
+  const [image, setImage] = useState(initialImage || DEFAULT_HERO_IMAGE)
 
   useEffect(() => {
     getPublicStoreSettings().then((settings) => {

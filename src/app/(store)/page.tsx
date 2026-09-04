@@ -1,21 +1,25 @@
-import { Hero } from "@/components/store/home/hero"
+import { Hero, DEFAULT_HERO_IMAGE } from "@/components/store/home/hero"
 import { ProductCard } from "@/components/store/product/product-card"
 import { productService } from "@/services/product.service"
+import { settingsService } from "@/services/settings.service"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
 export const revalidate = 60
 
 export default async function HomePage() {
-  const [featuredProducts, newArrivals, bestSellers] = await Promise.all([
+  const [featuredProducts, newArrivals, bestSellers, heroImageSetting] = await Promise.all([
     productService.getFeatured(4),
     productService.getNewArrivals(4),
     productService.getBestSellers(4),
+    settingsService.get("heroImage"),
   ])
+
+  const heroImage = heroImageSetting || DEFAULT_HERO_IMAGE
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Hero />
+      <Hero initialImage={heroImage} />
       
       {/* Featured Watches */}
       <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
