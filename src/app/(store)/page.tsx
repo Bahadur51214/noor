@@ -4,6 +4,8 @@ import { productService } from "@/services/product.service"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
+export const revalidate = 60
+
 export default async function HomePage() {
   const [featuredProducts, newArrivals, bestSellers] = await Promise.all([
     productService.getFeatured(4),

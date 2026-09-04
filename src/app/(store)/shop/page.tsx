@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: 'Explore our collection of luxury women\'s watches.',
 }
 
+export const revalidate = 60
+
 interface ShopPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
