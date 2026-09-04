@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiImageUpload } from "@/components/ui/multi-image-upload";
+import { RichTextEditor } from "@/components/admin/products/rich-text-editor";
 import { toast } from "sonner";
 import { generateSlug } from "@/lib/utils";
 
@@ -191,17 +192,13 @@ export function ProductForm({ product, categories }: ProductFormProps) {
               </div>
               <div>
                 <Label>Description</Label>
-                <textarea
-                  {...register("description")}
-                  className="w-full rounded-md border border-[#E0DCD5] px-3 py-2 text-sm focus:border-[#C9A96E] focus:outline-none focus:ring-1 focus:ring-[#C9A96E]"
-                  rows={5}
-                  placeholder="Product description..."
-                />
-                {errors.description && (
-                  <p className="mt-1 text-xs text-red-500">
-                    {errors.description.message}
-                  </p>
-                )}
+                <div className="mt-2">
+                  <RichTextEditor
+                    value={watch("description") || ""}
+                    onChange={(val) => setValue("description", val)}
+                    error={errors.description?.message as string | undefined}
+                  />
+                </div>
               </div>
               <div>
                 <Label>Short Description</Label>

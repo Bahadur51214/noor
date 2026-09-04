@@ -4,6 +4,7 @@ import { Metadata } from "next"
 import { Truck, ShieldCheck, RefreshCw } from "lucide-react"
 import { AddToCartButton } from "./add-to-cart-button"
 import { ProductImageGallery } from "@/components/store/product/product-image-gallery"
+import { ProductDescription } from "@/components/store/product/product-description"
 import { Badge } from "@/components/ui/badge"
 
 interface ProductPageProps {
@@ -105,8 +106,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </p>
           </div>
 
-          <div className="prose prose-sm text-gray-600 mb-8 max-w-none">
-            <p>{product.description}</p>
+          <div className="mb-8">
+            <ProductDescription description={product.description} />
           </div>
 
           <div className="mb-8">
