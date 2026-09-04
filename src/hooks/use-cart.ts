@@ -101,7 +101,6 @@ export const useCart = create<CartStore>()(
     }),
     {
       name: 'noor-cart-storage',
-      skipHydration: true,
     }
   )
 )
