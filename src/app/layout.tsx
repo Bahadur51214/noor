@@ -47,7 +47,7 @@ export const metadata: Metadata = {
       "Elegant watches designed to complement every moment. Shop online across Pakistan.",
     images: [
       {
-        url: "/images/og-image.jpg",
+        url: "/images/og-image.svg",
         width: 1200,
         height: 630,
         alt: "NOOR — Premium Women's Watches",
@@ -71,6 +71,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -81,6 +84,28 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "OnlineStore",
+              name: "NOOR Watches",
+              url: process.env.NEXT_PUBLIC_APP_URL || "https://noorwatches.com",
+              description:
+                "Discover NOOR's collection of elegant women's watches. Premium timepieces delivered across Pakistan with Cash on Delivery or Advance Payment.",
+              image: "/images/og-image.svg",
+              sameAs: [],
+              potentialAction: {
+                "@type": "SearchAction",
+                target:
+                  (process.env.NEXT_PUBLIC_APP_URL || "https://noorwatches.com") +
+                  "/shop?search={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
         {children}
         <Toaster
           position="top-right"

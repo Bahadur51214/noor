@@ -25,7 +25,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
       productId: product.id,
       name: product.name,
       slug: product.slug,
-      image: product.images[0]?.url || "/placeholder.jpg",
+      image: product.images[0]?.url || "/placeholder.svg",
       price: Number(product.price),
       salePrice: product.salePrice != null ? Number(product.salePrice) : null,
       stock: product.stock

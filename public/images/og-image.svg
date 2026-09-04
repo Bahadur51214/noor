@@ -1,0 +1,8 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0D0D0D"/>
+  <rect x="0" y="0" width="1200" height="6" fill="#C9A96E"/>
+  <text x="600" y="300" text-anchor="middle" font-family="Georgia, serif" font-size="120" fill="#F7F4EF" letter-spacing="12">NOOR</text>
+  <text x="600" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" fill="#C9A96E" letter-spacing="8">PREMIUM WOMEN'S WATCHES</text>
+  <text x="600" y="430" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#6B655C" letter-spacing="4">noorwatches.com</text>
+  <circle cx="600" cy="500" r="6" fill="#C9A96E"/>
+</svg>

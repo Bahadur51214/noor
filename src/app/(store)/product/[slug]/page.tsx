@@ -23,6 +23,16 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   return {
     title: `${product.name} | NOOR`,
     description: product.description || `Buy ${product.name} at NOOR`,
+    alternates: { canonical: `/product/${product.slug}` },
+    openGraph: {
+      title: `${product.name} | NOOR`,
+      description: product.description || `Buy ${product.name} at NOOR`,
+      url: `/product/${product.slug}`,
+      type: 'website',
+      images: product.images[0]?.url
+        ? [{ url: product.images[0].url, alt: product.name }]
+        : undefined,
+    },
   }
 }
 
@@ -34,16 +44,40 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound()
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://noorwatches.com'
+
   const isSale = !!product.salePrice
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description || undefined,
+    sku: product.sku || undefined,
+    image: product.images[0]?.url || undefined,
+    brand: { '@type': 'Brand', name: 'NOOR' },
+    offers: {
+      '@type': 'Offer',
+      url: `${baseUrl}/product/${product.slug}`,
+      priceCurrency: 'PKR',
+      price: isSale && product.salePrice ? product.salePrice : product.price,
+      availability: 'https://schema.org/InStock',
+    },
+  }
+
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
         {/* Image Gallery */}
         <div className="flex flex-col gap-4">
           <div className="relative aspect-[4/5] bg-[#F7F4EF] w-full">
             <Image
-              src={product.images[0]?.url || "/placeholder.jpg"}
+              src={product.images[0]?.url || "/placeholder.svg"}
               alt={product.images[0]?.alt || product.name}
               fill
               className="object-cover"
@@ -116,6 +150,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

@@ -56,7 +56,7 @@ export default function CartPage() {
               <div className="col-span-12 md:col-span-6 flex gap-4">
                 <div className="w-24 h-24 relative bg-[#F7F4EF] rounded overflow-hidden flex-shrink-0">
                   <Image 
-                    src={item.image || "/placeholder.jpg"} 
+                    src={item.image || "/placeholder.svg"} 
                     alt={item.name}
                     fill
                     className="object-cover"

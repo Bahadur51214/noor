@@ -32,7 +32,7 @@ export function ProductCard({ product }: ProductCardProps) {
       productId: product.id,
       name: product.name,
       slug: product.slug,
-      image: product.images[0]?.url || "/placeholder.jpg",
+      image: product.images[0]?.url || "/placeholder.svg",
       price: Number(product.price),
       salePrice: product.salePrice != null ? Number(product.salePrice) : null,
       stock: product.stock,
@@ -53,7 +53,7 @@ export function ProductCard({ product }: ProductCardProps) {
     >
       <Link href={`/product/${product.slug}`} className="relative aspect-[4/5] overflow-hidden bg-[#F7F4EF] rounded-sm block">
         <Image
-          src={product.images[0]?.url || "/placeholder.jpg"}
+          src={product.images[0]?.url || "/placeholder.svg"}
           alt={product.images[0]?.alt || product.name}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-105"

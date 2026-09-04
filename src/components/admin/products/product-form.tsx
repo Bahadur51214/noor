@@ -9,7 +9,7 @@ import { createProduct, updateProduct } from "@/actions/product.actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ImageUpload } from "@/components/ui/image-upload";
+import { MultiImageUpload } from "@/components/ui/multi-image-upload";
 import { toast } from "sonner";
 import { generateSlug } from "@/lib/utils";
 
@@ -96,7 +96,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
           images: product.images?.map((img) => img.url) || [],
         }
       : {
-          status: "DRAFT",
+          status: "ACTIVE",
           stock: 0,
           lowStockThreshold: 5,
           featured: false,
@@ -218,17 +218,14 @@ export function ProductForm({ product, categories }: ProductFormProps) {
             <h3 className="mb-4 font-serif text-lg font-semibold">Media</h3>
             <div className="space-y-4">
               <div>
-                <Label>Product Image</Label>
+                <Label>Product Images</Label>
                 <div className="mt-2">
-                  <ImageUpload
-                    value={watch("images")?.[0] || ""}
-                    onChange={(url) => setValue("images", [url])}
+                  <MultiImageUpload
+                    value={watch("images") || []}
+                    onChange={(urls) => setValue("images", urls)}
                     folder="noor-products"
                   />
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Upload a high-quality product image (JPG, PNG, WEBP).
-                </p>
                 {errors.images && (
                   <p className="mt-1 text-xs text-red-500">
                     {errors.images.message}

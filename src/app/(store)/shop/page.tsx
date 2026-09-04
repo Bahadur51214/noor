@@ -7,6 +7,7 @@ import { Metadata } from "next"
 export const metadata: Metadata = {
   title: 'Shop | NOOR',
   description: 'Explore our collection of luxury women\'s watches.',
+  alternates: { canonical: '/shop' },
 }
 
 export const revalidate = 60
