@@ -361,17 +361,17 @@ export default function CheckoutPage() {
           <div className="bg-[#F7F4EF]/50 rounded-lg p-6 lg:sticky lg:top-8 border border-[#C9A96E]/20">
             <h2 className="font-serif text-xl mb-6 pb-4 border-b border-gray-200">Order Summary</h2>
             
-            <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2">
+            <div className="space-y-4 mb-6 pr-2">
               {items.map((item) => (
                 <div key={item.productId} className="flex gap-4 items-start">
-                  <div className="w-16 h-16 relative bg-white rounded border flex-shrink-0">
+                  <div className="w-16 h-16 relative bg-white rounded border flex-shrink-0 overflow-visible">
                     <Image 
                       src={item.image || "/placeholder.svg"} 
                       alt={item.name}
                       fill
                       className="object-cover rounded"
                     />
-                    <span className="absolute top-0.5 right-0.5 bg-black text-white text-[11px] min-w-[18px] px-1 leading-none font-bold flex items-center justify-center rounded-full">
+                    <span className="absolute -top-2 -right-2 bg-black text-white text-[11px] min-w-[18px] px-1 leading-none font-bold flex items-center justify-center rounded-full z-10">
                       {item.quantity}
                     </span>
                   </div>
