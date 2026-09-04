@@ -8,9 +8,18 @@ import {
   SheetContent,
   SheetTrigger,
   SheetTitle,
+  SheetClose,
 } from "@/components/ui/sheet";
 
 export function MobileNav() {
+  const links = [
+    { href: "/", label: "Home" },
+    { href: "/shop", label: "Shop" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+    { href: "/track-order", label: "Track Order" },
+  ];
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -22,21 +31,13 @@ export function MobileNav() {
       <SheetContent side="left" className="w-[300px] sm:w-[400px]">
         <SheetTitle className="sr-only">Menu</SheetTitle>
         <nav className="flex flex-col gap-4 mt-8">
-          <Link href="/" className="text-lg font-medium hover:text-[#C9A96E] transition-colors">
-            Home
-          </Link>
-          <Link href="/shop" className="text-lg font-medium hover:text-[#C9A96E] transition-colors">
-            Shop
-          </Link>
-          <Link href="/about" className="text-lg font-medium hover:text-[#C9A96E] transition-colors">
-            About
-          </Link>
-          <Link href="/contact" className="text-lg font-medium hover:text-[#C9A96E] transition-colors">
-            Contact
-          </Link>
-          <Link href="/track-order" className="text-lg font-medium hover:text-[#C9A96E] transition-colors">
-            Track Order
-          </Link>
+          {links.map((link) => (
+            <SheetClose asChild key={link.href}>
+              <Link href={link.href} className="text-lg font-medium hover:text-[#C9A96E] transition-colors">
+                {link.label}
+              </Link>
+            </SheetClose>
+          ))}
         </nav>
       </SheetContent>
     </Sheet>
