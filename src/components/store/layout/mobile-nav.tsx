@@ -22,6 +22,9 @@ export function MobileNav() {
       <SheetContent side="left" className="w-[300px] sm:w-[400px]">
         <SheetTitle className="sr-only">Menu</SheetTitle>
         <nav className="flex flex-col gap-4 mt-8">
+          <Link href="/" className="text-lg font-medium hover:text-[#C9A96E] transition-colors">
+            Home
+          </Link>
           <Link href="/shop" className="text-lg font-medium hover:text-[#C9A96E] transition-colors">
             Shop
           </Link>

@@ -26,6 +26,9 @@ export function Navbar() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8 mx-6">
+          <Link href="/" className="text-sm font-medium hover:text-[#C9A96E] transition-colors">
+            Home
+          </Link>
           <Link href="/shop" className="text-sm font-medium hover:text-[#C9A96E] transition-colors">
             Shop
           </Link>
