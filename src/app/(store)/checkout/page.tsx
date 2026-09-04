@@ -371,7 +371,7 @@ export default function CheckoutPage() {
                       fill
                       className="object-cover rounded"
                     />
-                    <span className="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                    <span className="absolute -top-2 -right-2 bg-black text-white text-[11px] min-w-[18px] px-1 leading-none font-bold flex items-center justify-center rounded-full">
                       {item.quantity}
                     </span>
                   </div>
