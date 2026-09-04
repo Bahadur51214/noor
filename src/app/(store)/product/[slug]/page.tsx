@@ -1,9 +1,9 @@
 import { productService } from "@/services/product.service"
 import { notFound } from "next/navigation"
-import Image from "next/image"
 import { Metadata } from "next"
 import { Truck, ShieldCheck, RefreshCw } from "lucide-react"
 import { AddToCartButton } from "./add-to-cart-button"
+import { ProductImageGallery } from "@/components/store/product/product-image-gallery"
 import { Badge } from "@/components/ui/badge"
 
 interface ProductPageProps {
@@ -74,31 +74,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
         {/* Image Gallery */}
-        <div className="flex flex-col gap-4">
-          <div className="relative aspect-[4/5] bg-[#F7F4EF] w-full">
-            <Image
-              src={product.images[0]?.url || "/placeholder.svg"}
-              alt={product.images[0]?.alt || product.name}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-          {product.images.length > 1 && (
-            <div className="grid grid-cols-4 gap-4">
-              {product.images.slice(1).map((image, index) => (
-                <div key={index} className="relative aspect-square bg-[#F7F4EF]">
-                  <Image
-                    src={image.url}
-                    alt={image.alt || `${product.name} ${index + 2}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <ProductImageGallery
+          images={product.images}
+          productName={product.name}
+        />
 
         {/* Product Info */}
         <div className="flex flex-col">
