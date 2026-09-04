@@ -19,7 +19,7 @@ export function CartDrawer() {
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeCart()}>
-      <SheetContent className="w-full sm:max-w-lg flex flex-col">
+      <SheetContent className="w-[80%] sm:max-w-lg flex flex-col">
         <SheetHeader>
           <SheetTitle className="text-2xl font-serif">Your Cart</SheetTitle>
         </SheetHeader>
