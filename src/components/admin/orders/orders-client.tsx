@@ -142,10 +142,14 @@ function buildShippingSheetHtml(orders: any[]): string {
         </div>
 
         <div class="footer">
-          <span>Payment: ${escapeHtml(paymentMethod)} (${escapeHtml(
-        order.paymentStatus || ""
-      )})</span>
-          <span>Order Status: ${escapeHtml(order.status || "")}</span>
+          <span>Payment: ${escapeHtml(paymentMethod)}</span>
+          ${
+            order.paymentMethod === "COD"
+              ? `<span class="collect">Collect Amount: Rs. ${Number(
+                  order.total
+                ).toLocaleString()}</span>`
+              : `<span>Prepaid (Advance)</span>`
+          }
           ${
             courier
               ? `<span>Courier: ${escapeHtml(courier)}${
@@ -183,6 +187,7 @@ function buildShippingSheetHtml(orders: any[]): string {
     .totals p { margin: 2px 0; }
     .totals .grand { font-weight: bold; font-size: 14px; border-top: 1px solid #999; padding-top: 4px; }
     .footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid #ccc; padding-top: 8px; font-size: 11px; color: #444; }
+    .footer .collect { font-weight: bold; color: #0D0D0D; border: 1px solid #0D0D0D; padding: 4px 10px; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -318,6 +323,23 @@ export function OrdersClient({
   };
 
   const handlePrint = async (type: "selected" | "filtered") => {
+    await doPrint({
+      orderIds: type === "selected" ? selectedIds : undefined,
+      filters: type === "filtered" ? filters : undefined,
+    });
+  };
+
+  const handlePrintOne = async (orderId: string) => {
+    await doPrint({ orderIds: [orderId] });
+  };
+
+  const doPrint = async ({
+    orderIds,
+    filters,
+  }: {
+    orderIds?: string[];
+    filters?: any;
+  }) => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) {
       toast.error(
@@ -328,10 +350,7 @@ export function OrdersClient({
 
     try {
       setExportLoading(true);
-      const data = await exportOrdersAction({
-        orderIds: type === "selected" ? selectedIds : undefined,
-        filters: type === "filtered" ? filters : undefined,
-      });
+      const data = await exportOrdersAction({ orderIds, filters });
 
       if (!data || data.length === 0) {
         printWindow.close();
@@ -494,9 +513,20 @@ export function OrdersClient({
                 </td>
                 <td className="p-3 text-gray-500">{format(new Date(order.createdAt), "MMM d, yyyy")}</td>
                 <td className="p-3 text-right">
-                  <Link href={`/admin/orders/${order.id}`} className="text-[#C9A96E] hover:underline font-medium">
-                    View
-                  </Link>
+                  <div className="flex items-center justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handlePrintOne(order.id)}
+                      disabled={exportLoading}
+                      title="Print shipping sheet"
+                      className="text-gray-400 hover:text-[#C9A96E] disabled:opacity-50"
+                    >
+                      <Printer className="w-4 h-4" />
+                    </button>
+                    <Link href={`/admin/orders/${order.id}`} className="text-[#C9A96E] hover:underline font-medium">
+                      View
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}
