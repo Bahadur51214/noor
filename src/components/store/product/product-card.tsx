@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "motion/react"
-import { ShoppingBag } from "lucide-react"
+import { ShoppingBag, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/hooks/use-cart"
@@ -20,6 +20,8 @@ interface ProductCardProps {
     stock: number
     isFeatured?: boolean
     newArrival?: boolean
+    reviewCount?: number
+    ratingAverage?: number
   }
 }
 
@@ -85,6 +87,19 @@ export function ProductCard({ product }: ProductCardProps) {
         <Link href={`/product/${product.slug}`} className="hover:text-[#C9A96E] transition-colors">
           <h3 className="font-serif text-lg text-[#0D0D0D] truncate">{product.name}</h3>
         </Link>
+        {(product.reviewCount ?? 0) > 0 && (
+          <div className="flex items-center gap-1.5" aria-label={`${product.ratingAverage} stars, ${product.reviewCount} reviews`}>
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Star
+                  key={i}
+                  className={`w-3.5 h-3.5 ${i <= Math.round(product.ratingAverage ?? 0) ? "fill-[#C9A96E] text-[#C9A96E]" : "fill-gray-200 text-gray-200"}`}
+                />
+              ))}
+            </div>
+            <span className="text-xs text-gray-400">({product.reviewCount})</span>
+          </div>
+        )}
         <div className="flex items-center gap-3">
           {isSale ? (
             <>

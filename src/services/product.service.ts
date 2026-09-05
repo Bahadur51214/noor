@@ -2,6 +2,24 @@ import { db } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 import { ProductStatus } from '@/types/product'
 
+async function attachReviewStats<T extends { id: string }>(products: T[]) {
+  if (products.length === 0) return products as (T & { reviewCount: number; ratingAverage: number })[]
+  const aggs = await db.review.groupBy({
+    by: ['productId'],
+    where: {
+      productId: { in: products.map((p) => p.id) },
+      status: 'APPROVED',
+    },
+    _avg: { rating: true },
+    _count: { id: true },
+  })
+  const map = new Map(aggs.map((a) => [a.productId, a]))
+  return (products as any[]).map((p) => {
+    const agg = map.get(p.id)
+    return { ...p, reviewCount: agg?._count.id ?? 0, ratingAverage: agg?._avg.rating ?? 0 }
+  })
+}
+
 export const productService = {
   async getAll(params: {
     page?: number;
@@ -46,7 +64,7 @@ export const productService = {
     ])
 
     return {
-      products,
+      products: await attachReviewStats(products),
       total,
       pages: Math.ceil(total / limit)
     }
@@ -110,37 +128,41 @@ export const productService = {
   },
 
   async getFeatured(limit: number = 4) {
-    return db.product.findMany({
+    const products = await db.product.findMany({
       where: { featured: true, status: 'ACTIVE' },
       take: limit,
       include: { category: { select: { name: true } }, images: { orderBy: { sortOrder: 'asc' }, take: 1 } }
     })
+    return attachReviewStats(products)
   },
 
   async getNewArrivals(limit: number = 4) {
-    return db.product.findMany({
+    const products = await db.product.findMany({
       where: { status: 'ACTIVE' },
       orderBy: { createdAt: 'desc' },
       take: limit,
       include: { category: { select: { name: true } }, images: { orderBy: { sortOrder: 'asc' }, take: 1 } }
     })
+    return attachReviewStats(products)
   },
 
   async getBestSellers(limit: number = 4) {
-    return db.product.findMany({
+    const products = await db.product.findMany({
       where: { bestSeller: true, status: 'ACTIVE' },
       take: limit,
       include: { category: { select: { name: true } }, images: { orderBy: { sortOrder: 'asc' }, take: 1 } }
     })
+    return attachReviewStats(products)
   },
 
   async getRelated(productId: string, categoryId: string | null, limit: number = 4) {
     if (!categoryId) return []
-    return db.product.findMany({
+    const products = await db.product.findMany({
       where: { categoryId, id: { not: productId }, status: 'ACTIVE' },
       take: limit,
       include: { category: { select: { name: true } }, images: { orderBy: { sortOrder: 'asc' }, take: 1 } }
     })
+    return attachReviewStats(products)
   },
 
   async checkStock(productId: string, quantity: number) {
@@ -153,7 +175,7 @@ export const productService = {
   },
 
   async search(query: string, limit: number = 10) {
-    return db.product.findMany({
+    const products = await db.product.findMany({
       where: {
         status: 'ACTIVE',
         OR: [
@@ -164,5 +186,6 @@ export const productService = {
       take: limit,
       include: { category: { select: { name: true } }, images: { orderBy: { sortOrder: 'asc' }, take: 1 } }
     })
+    return attachReviewStats(products)
   }
 }
