@@ -19,7 +19,7 @@ export function ProductInformation({
   whyLoveIt,
   careInstructions,
 }: ProductInformationProps) {
-  const [open, setOpen] = useState<SectionId>("details");
+  const [open, setOpen] = useState<SectionId | null>(null);
 
   const loveIt = parseDescription(whyLoveIt);
   const careLines = (careInstructions ?? "")
