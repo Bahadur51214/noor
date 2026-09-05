@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,8 +18,18 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormMessage, useFormField } from '@/components/ui/form'
 import { Loader2 } from 'lucide-react'
+
+function FieldLabel({ children }: { children: ReactNode }) {
+  const { formItemId } = useFormField()
+
+  return (
+    <Label htmlFor={formItemId} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+      {children}
+    </Label>
+  )
+}
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -140,11 +150,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="fullName"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FieldLabel>Full Name</FieldLabel>
                         <FormControl>
-                          <Input placeholder="John Doe" {...field} />
+                          <Input placeholder={fieldState.error ? '' : 'John Doe'} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -154,11 +164,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="phone"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
+                        <FieldLabel>Phone Number</FieldLabel>
                         <FormControl>
-                          <Input placeholder="03001234567" {...field} />
+                          <Input placeholder={fieldState.error ? '' : '03001234567'} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -168,11 +178,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="email"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem className="md:col-span-2">
-                        <FormLabel>Email (Optional)</FormLabel>
+                        <FieldLabel>Email (Optional)</FieldLabel>
                         <FormControl>
-                          <Input placeholder="john@example.com" type="email" {...field} />
+                          <Input placeholder={fieldState.error ? '' : 'john@example.com'} type="email" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -182,11 +192,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="city"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem>
-                        <FormLabel>City</FormLabel>
+                        <FieldLabel>City</FieldLabel>
                         <FormControl>
-                          <Input placeholder="Lahore" {...field} />
+                          <Input placeholder={fieldState.error ? '' : 'Lahore'} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -196,11 +206,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="area"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem>
-                        <FormLabel>Area</FormLabel>
+                        <FieldLabel>Area</FieldLabel>
                         <FormControl>
-                          <Input placeholder="Gulberg" {...field} />
+                          <Input placeholder={fieldState.error ? '' : 'Gulberg'} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -210,11 +220,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="address"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem className="md:col-span-2">
-                        <FormLabel>Full Address</FormLabel>
+                        <FieldLabel>Full Address</FieldLabel>
                         <FormControl>
-                          <Textarea placeholder="House 123, Street 4..." {...field} />
+                          <Textarea placeholder={fieldState.error ? '' : 'House 123, Street 4...'} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -224,11 +234,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="landmark"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem className="md:col-span-2">
-                        <FormLabel>Nearest Landmark (Optional)</FormLabel>
+                        <FieldLabel>Nearest Landmark (Optional)</FieldLabel>
                         <FormControl>
-                          <Input placeholder="Near ABC School" {...field} />
+                          <Input placeholder={fieldState.error ? '' : 'Near ABC School'} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -315,11 +325,11 @@ export default function CheckoutPage() {
                         <FormField
                           control={paymentRefForm.control}
                           name="senderName"
-                          render={({ field }) => (
+                          render={({ field, fieldState }) => (
                             <FormItem>
-                              <FormLabel>Sender Account Name</FormLabel>
+                              <FieldLabel>Sender Account Name</FieldLabel>
                               <FormControl>
-                                <Input placeholder="Ali Khan" {...field} />
+                                <Input placeholder={fieldState.error ? '' : 'Ali Khan'} {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -328,11 +338,11 @@ export default function CheckoutPage() {
                         <FormField
                           control={paymentRefForm.control}
                           name="transactionId"
-                          render={({ field }) => (
+                          render={({ field, fieldState }) => (
                             <FormItem>
-                              <FormLabel>Transaction ID (TID)</FormLabel>
+                              <FieldLabel>Transaction ID (TID)</FieldLabel>
                               <FormControl>
-                                <Input placeholder="1234567890" {...field} />
+                                <Input placeholder={fieldState.error ? '' : '1234567890'} {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
