@@ -7,7 +7,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useCart } from '@/hooks/use-cart'
 import { submitCheckout } from '@/actions/checkout.actions'
 import { getPublicStoreSettings, getPublicPaymentSettings } from '@/actions/public.actions'
-import { checkoutFormSchema, paymentReferenceSchema, CheckoutFormValues, PaymentReferenceValues } from '@/schemas/checkout.schema'
+import { checkoutFormSchema, CheckoutFormValues } from '@/schemas/checkout.schema'
+import { toWhatsAppLink } from '@/lib/utils'
+import { WhatsAppIcon } from '@/components/store/whatsapp-icon'
 import { PaymentMethod } from '@/types/order'
 import Image from 'next/image'
 import { toast } from 'sonner'
@@ -43,6 +45,7 @@ export default function CheckoutPage() {
     easypaisa: '',
     jazzcash: '',
   })
+  const [whatsapp, setWhatsapp] = useState('')
   
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -61,23 +64,6 @@ export default function CheckoutPage() {
   const paymentMethod = form.watch('paymentMethod')
   const isAdvancePayment = paymentMethod !== PaymentMethod.COD
   
-  const paymentRefForm = useForm<PaymentReferenceValues>({
-    resolver: zodResolver(paymentReferenceSchema),
-    defaultValues: {
-      method: PaymentMethod.BANK_TRANSFER,
-      transactionId: '',
-      senderName: '',
-      screenshotUrl: '',
-    }
-  })
-
-  // Keep paymentRef method in sync
-  useEffect(() => {
-    if (isAdvancePayment) {
-      paymentRefForm.setValue('method', paymentMethod)
-    }
-  }, [paymentMethod, isAdvancePayment, paymentRefForm])
-
   useEffect(() => {
     setMounted(true)
     if (items.length === 0 && mounted) {
@@ -86,6 +72,7 @@ export default function CheckoutPage() {
     getPublicStoreSettings().then((settings) => {
       setCodDeliveryFee(Number(settings.shipping.codDeliveryFee ?? 250))
       setAdvanceDeliveryFee(Number(settings.shipping.advanceDeliveryFee ?? 0))
+      setWhatsapp(settings.whatsapp || settings.phone || '')
     })
     getPublicPaymentSettings().then((accounts) => {
       setPaymentAccounts({
@@ -106,21 +93,9 @@ export default function CheckoutPage() {
   const onSubmit = async (data: CheckoutFormValues) => {
     setIsSubmitting(true)
     try {
-      let paymentRefData: PaymentReferenceValues | undefined = undefined
-      
-      if (isAdvancePayment) {
-        const isValid = await paymentRefForm.trigger()
-        if (!isValid) {
-          toast.error('Please fill in the payment reference details')
-          setIsSubmitting(false)
-          return
-        }
-        paymentRefData = paymentRefForm.getValues()
-      }
-      
       const cartItems = items.map(i => ({ productId: i.productId, quantity: i.quantity }))
       
-      const result = await submitCheckout(data, cartItems, paymentRefData)
+      const result = await submitCheckout(data, cartItems)
       
       if (result.success && result.orderNumber) {
         clearCart()
@@ -306,7 +281,7 @@ export default function CheckoutPage() {
                     animate={{ opacity: 1, height: 'auto' }}
                     className="mt-8 pt-6 border-t"
                   >
-                    <div className="bg-[#F7F4EF] p-4 rounded-md mb-6">
+                    <div className="bg-[#F7F4EF] p-4 rounded-md mb-4">
                       <h3 className="font-medium mb-2">Account Details</h3>
                       {paymentMethod === PaymentMethod.BANK_TRANSFER && (
                         <p className="text-sm text-gray-700 whitespace-pre-line">{paymentAccounts.bankDetails || "Please contact support for bank transfer details."}</p>
@@ -317,39 +292,27 @@ export default function CheckoutPage() {
                       {paymentMethod === PaymentMethod.JAZZCASH && (
                         <p className="text-sm text-gray-700 whitespace-pre-line">{paymentAccounts.jazzcash || "Please contact support for JazzCash details."}</p>
                       )}
-                      <p className="text-xs mt-2 text-gray-500">Please transfer the total amount (Rs. {total.toLocaleString()}) and enter the reference details below.</p>
+                      <p className="text-xs mt-2 text-gray-500">Please transfer the total amount (Rs. {total.toLocaleString()}).</p>
                     </div>
-                    
-                    <Form {...paymentRefForm}>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <FormField
-                          control={paymentRefForm.control}
-                          name="senderName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FieldLabel>Sender Account Name</FieldLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={paymentRefForm.control}
-                          name="transactionId"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FieldLabel>Transaction ID (TID)</FieldLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </Form>
+
+                    <div className="border border-[#C9A96E]/40 bg-[#C9A96E]/5 rounded-md p-4">
+                      <h3 className="font-medium mb-2">How to Confirm Your Payment</h3>
+                      <p className="text-sm text-gray-700">
+                        After completing your transfer, send a screenshot of your payment to our WhatsApp at{" "}
+                        <span className="font-semibold text-black">{whatsapp || "our support number"}</span>. Our
+                        team will verify it and confirm your order shortly.
+                      </p>
+                      <Button asChild className="mt-4 bg-[#25D366] hover:bg-[#1fb857] text-white">
+                        <a
+                          href={whatsapp ? toWhatsAppLink(whatsapp, `Hi NOOR! I've completed my payment (Rs. ${total.toLocaleString()}) for order. Please find the screenshot attached.`) : '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <WhatsAppIcon className="w-4 h-4 mr-2" />
+                          Send Screenshot on WhatsApp
+                        </a>
+                      </Button>
+                    </div>
                   </motion.div>
                 )}
               </div>

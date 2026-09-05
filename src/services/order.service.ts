@@ -130,14 +130,14 @@ export const orderService = {
               note: 'Order created'
             }
           },
-          ...(data.paymentReference && data.paymentMethod !== 'COD'
+          ...(data.paymentMethod !== 'COD'
             ? {
                 payments: {
                   create: {
                     method: data.paymentMethod,
-                    transactionId: data.paymentReference.transactionId,
-                    senderName: data.paymentReference.senderName,
-                    screenshotUrl: data.paymentReference.screenshotUrl || null,
+                    transactionId: data.paymentReference?.transactionId ?? null,
+                    senderName: data.paymentReference?.senderName ?? null,
+                    screenshotUrl: data.paymentReference?.screenshotUrl || null,
                     status: 'PENDING_VERIFICATION'
                   }
                 }

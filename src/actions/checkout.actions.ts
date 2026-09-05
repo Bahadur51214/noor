@@ -31,10 +31,7 @@ export async function submitCheckout(
     const validatedData = checkoutFormSchema.parse(formData)
 
     let paymentReference = undefined
-    if (validatedData.paymentMethod !== 'COD') {
-      if (!paymentRefData) {
-        return { success: false, error: 'Payment reference is required for advance payments' }
-      }
+    if (validatedData.paymentMethod !== 'COD' && paymentRefData) {
       paymentReference = paymentReferenceSchema.parse(paymentRefData)
     }
 
