@@ -1,11 +1,12 @@
 import { db } from '@/lib/db'
 import { Prisma } from '@prisma/client'
+import { randomInt } from 'crypto'
 import { emailService } from './email.service'
 
 async function generateUniqueOrderNumber(tx: Prisma.TransactionClient) {
   const prefix = 'NOOR'
   for (let i = 0; i < 5; i++) {
-    const random = Math.floor(100000 + Math.random() * 900000)
+    const random = randomInt(100000, 1000000)
     const orderNumber = `${prefix}-${random}`
     const existing = await tx.order.findUnique({
       where: { orderNumber },
@@ -57,16 +58,22 @@ export const orderService = {
       let discountAmount = new Prisma.Decimal(0)
       if (data.discountCode) {
         const discount = await tx.discount.findUnique({ where: { code: data.discountCode } })
-        if (discount && discount.active && discount.usedCount < (discount.usageLimit || Infinity)) {
-          if (discount.type === 'PERCENTAGE') {
-            discountAmount = subtotal.mul(discount.amount.div(100))
-          } else {
-            discountAmount = discount.amount
+        if (discount && discount.active) {
+          const usageLimit = discount.usageLimit ?? Number.MAX_SAFE_INTEGER
+          if (discount.usedCount < usageLimit) {
+            if (discount.type === 'PERCENTAGE') {
+              discountAmount = subtotal.mul(discount.amount.div(100))
+            } else {
+              discountAmount = discount.amount
+            }
+            const claimed = await tx.discount.updateMany({
+              where: { id: discount.id, usedCount: { lt: usageLimit } },
+              data: { usedCount: { increment: 1 } }
+            })
+            if (claimed.count === 0) {
+              discountAmount = new Prisma.Decimal(0)
+            }
           }
-          await tx.discount.update({
-            where: { id: discount.id },
-            data: { usedCount: { increment: 1 } }
-          })
         }
       }
 
