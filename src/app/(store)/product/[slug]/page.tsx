@@ -6,7 +6,7 @@ import { Truck, Banknote, RefreshCw, Star } from "lucide-react"
 import { AddToCartButton } from "./add-to-cart-button"
 import { ProductImageGallery } from "@/components/store/product/product-image-gallery"
 import { ProductDescription } from "@/components/store/product/product-description"
-import { ProductSpecifications } from "@/components/store/product/product-specifications"
+import { ProductInformation } from "@/components/store/product/product-information"
 import { ProductReviews } from "@/components/store/product/product-reviews"
 import { Badge } from "@/components/ui/badge"
 
@@ -148,7 +148,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
 
           <div className="mb-8">
-            <ProductSpecifications
+            <ProductInformation
               specifications={
                 product.specifications &&
                 typeof product.specifications === "object" &&
@@ -156,6 +156,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   ? (product.specifications as Record<string, string>)
                   : null
               }
+              whyLoveIt={product.whyLoveIt}
+              careInstructions={product.careInstructions}
             />
           </div>
 

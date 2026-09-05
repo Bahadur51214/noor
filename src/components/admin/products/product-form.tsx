@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { MultiImageUpload } from "@/components/ui/multi-image-upload";
 import { RichTextEditor } from "@/components/admin/products/rich-text-editor";
 import { toast } from "sonner";
-import { Plus, X } from "lucide-react";
 import { generateSlug } from "@/lib/utils";
 
 const formSchema = z.object({
@@ -33,10 +32,26 @@ const formSchema = z.object({
   newArrival: z.boolean().default(false),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
+  whyLoveIt: z.string().optional(),
+  careInstructions: z.string().optional(),
   images: z.array(z.string()).default([]),
 });
 
 type FormData = z.infer<typeof formSchema>;
+
+const PRODUCT_SPEC_FIELDS = [
+  "Dial Color",
+  "Movement",
+  "Strap Material",
+  "Strap Color",
+  "Back Case",
+  "Water Resistance",
+  "Color Warranty",
+  "Box",
+  "Gender",
+  "Quality",
+  "Style",
+];
 
 interface ProductFormProps {
   product?: {
@@ -59,6 +74,8 @@ interface ProductFormProps {
     seoTitle?: string | null;
     seoDescription?: string | null;
     specifications?: Record<string, string> | null;
+    whyLoveIt?: string | null;
+    careInstructions?: string | null;
     images?: Array<{ url: string }>;
   };
   categories: Array<{ id: string; name: string }>;
@@ -68,14 +85,15 @@ export function ProductForm({ product, categories }: ProductFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const isEditing = !!product;
-  const [specRows, setSpecRows] = useState<Array<{ label: string; value: string }>>(
-    () =>
-      product?.specifications
-        ? Object.entries(product.specifications).map(([label, value]) => ({
-            label,
-            value,
-          }))
-        : []
+  const [specs, setSpecs] = useState<Record<string, string>>(() =>
+    product?.specifications
+      ? Object.fromEntries(
+          PRODUCT_SPEC_FIELDS.map((field) => [
+            field,
+            product.specifications?.[field] ?? "",
+          ])
+        )
+      : {}
   );
 
   const {
@@ -105,6 +123,8 @@ export function ProductForm({ product, categories }: ProductFormProps) {
           newArrival: product.newArrival,
           seoTitle: product.seoTitle || "",
           seoDescription: product.seoDescription || "",
+          whyLoveIt: product.whyLoveIt || "",
+          careInstructions: product.careInstructions || "",
           images: product.images?.map((img) => img.url) || [],
         }
       : {
@@ -120,27 +140,15 @@ export function ProductForm({ product, categories }: ProductFormProps) {
 
   const name = watch("name");
 
-  function addSpecRow() {
-    setSpecRows((rows) => [...rows, { label: "", value: "" }]);
-  }
-
-  function updateSpecRow(index: number, field: "label" | "value", value: string) {
-    setSpecRows((rows) =>
-      rows.map((row, i) => (i === index ? { ...row, [field]: value } : row))
-    );
-  }
-
-  function removeSpecRow(index: number) {
-    setSpecRows((rows) => rows.filter((_, i) => i !== index));
+  function updateSpec(field: string, value: string) {
+    setSpecs((prev) => ({ ...prev, [field]: value }));
   }
 
   async function onSubmit(data: FormData) {
     setLoading(true);
     try {
-      const specs = Object.fromEntries(
-        specRows
-          .filter((row) => row.label.trim() && row.value.trim())
-          .map((row) => [row.label.trim(), row.value.trim()])
+      const cleanSpecs = Object.fromEntries(
+        Object.entries(specs).filter(([, value]) => value.trim())
       );
 
       const cleanData = {
@@ -151,7 +159,9 @@ export function ProductForm({ product, categories }: ProductFormProps) {
         costPrice:
           data.costPrice === "" ? undefined : data.costPrice || undefined,
         specifications:
-          Object.keys(specs).length > 0 ? specs : null,
+          Object.keys(cleanSpecs).length > 0 ? cleanSpecs : null,
+        whyLoveIt: data.whyLoveIt || null,
+        careInstructions: data.careInstructions || null,
         images: data.images.map((url, index) => ({ url, sortOrder: index })),
       };
 
@@ -265,60 +275,51 @@ export function ProductForm({ product, categories }: ProductFormProps) {
             </div>
           </div>
 
-          {/* Specifications */}
+          {/* Specifications & Details */}
           <div className="rounded-lg border border-[#E0DCD5] bg-white p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-serif text-lg font-semibold">
-                Specifications
-              </h3>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addSpecRow}
-                className="flex items-center gap-1"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Add Row
-              </Button>
+            <h3 className="mb-4 font-serif text-lg font-semibold">
+              Product Details
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {PRODUCT_SPEC_FIELDS.map((field) => (
+                <div key={field}>
+                  <Label>{field}</Label>
+                  <Input
+                    value={specs[field] ?? ""}
+                    onChange={(e) => updateSpec(field, e.target.value)}
+                    placeholder={field === "Movement" ? "Quartz" : "Optional"}
+                  />
+                </div>
+              ))}
             </div>
-            {specRows.length === 0 ? (
-              <p className="text-sm text-gray-500">
-                No specifications added. Technical specs will appear on the
-                product page.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {specRows.map((row, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2"
-                  >
-                    <Input
-                      value={row.label}
-                      onChange={(e) => updateSpecRow(i, "label", e.target.value)}
-                      placeholder="e.g. Weight"
-                      className="flex-1"
-                    />
-                    <Input
-                      value={row.value}
-                      onChange={(e) => updateSpecRow(i, "value", e.target.value)}
-                      placeholder="e.g. 60g"
-                      className="flex-1"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeSpecRow(i)}
-                      className="shrink-0 text-gray-400 hover:text-red-500"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
+          </div>
+
+          {/* Why You Love It */}
+          <div className="rounded-lg border border-[#E0DCD5] bg-white p-6">
+            <h3 className="mb-4 font-serif text-lg font-semibold">
+              Why You Love It
+            </h3>
+            <div>
+              <RichTextEditor
+                value={watch("whyLoveIt") || ""}
+                onChange={(val) => setValue("whyLoveIt", val)}
+              />
+            </div>
+          </div>
+
+          {/* Care Instructions */}
+          <div className="rounded-lg border border-[#E0DCD5] bg-white p-6">
+            <h3 className="mb-4 font-serif text-lg font-semibold">
+              Care Instructions
+            </h3>
+            <div>
+              <textarea
+                {...register("careInstructions")}
+                className="w-full rounded-md border border-[#E0DCD5] px-3 py-2 text-sm focus:border-[#C9A96E] focus:outline-none focus:ring-1 focus:ring-[#C9A96E]"
+                rows={5}
+                placeholder="One care tip per line"
+              />
+            </div>
           </div>
 
           {/* Pricing */}

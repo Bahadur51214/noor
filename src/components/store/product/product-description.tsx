@@ -25,7 +25,7 @@ function FeatureIcon({ icon, className }: { icon: string; className?: string }) 
   return <span className={className}>{icon}</span>;
 }
 
-function Blocks({ blocks }: { blocks: DescriptionBlock[] }) {
+export function DescriptionBlocks({ blocks }: { blocks: DescriptionBlock[] }) {
   return (
     <div className="product-description space-y-5">
       {blocks.map((block, i) => {
@@ -122,7 +122,7 @@ export function ProductDescription({
   const parsed = parseDescription(description);
 
   if (parsed.structured) {
-    return <Blocks blocks={parsed.blocks} />;
+    return <DescriptionBlocks blocks={parsed.blocks} />;
   }
 
   const plain = parsed.plainText;

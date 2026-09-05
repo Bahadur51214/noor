@@ -135,6 +135,8 @@ model Product {
   lowStockThreshold Int          @default(5)
   categoryId       String?
   specifications   Json?
+  whyLoveIt        String?
+  careInstructions String?
   status           ProductStatus @default(DRAFT)
   featured         Boolean       @default(false)
   bestSeller       Boolean       @default(false)

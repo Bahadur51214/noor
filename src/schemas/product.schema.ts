@@ -8,6 +8,8 @@ const baseProductSchema = z.object({
   description: z.string().min(10, "Description is required"),
   shortDescription: z.string().optional().nullable(),
   specifications: z.record(z.string()).optional().nullable(),
+  whyLoveIt: z.string().optional().nullable(),
+  careInstructions: z.string().optional().nullable(),
   price: z.coerce.number().positive("Price must be greater than 0"),
   salePrice: z.coerce.number().optional().nullable(),
   costPrice: z.coerce.number().optional().nullable(),
