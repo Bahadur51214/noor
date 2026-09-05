@@ -3,6 +3,7 @@ import { OrderStatusUpdater } from "@/components/admin/orders/order-status-updat
 import { PaymentVerification } from "@/components/admin/orders/payment-verification";
 import { format } from 'date-fns';
 import { notFound } from 'next/navigation';
+import { requireAuth } from '@/lib/auth';
 
 const PAYMENT_STATUS_LABELS: Record<string, string> = {
   PENDING: "Pending",
@@ -22,7 +23,7 @@ const PAYMENT_BADGE_CLASSES: Record<string, string> = {
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
   JAZZCASH: "JazzCash",
-  EASIPAISA: "EasyPaisa",
+  EASYPAISA: "EasyPaisa",
   BANK_TRANSFER: "Bank Transfer",
   COD: "Cash on Delivery",
 };
@@ -33,6 +34,7 @@ export default async function AdminOrderDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  await requireAuth();
   const order = await orderService.getById(id);
 
   if (!order) {

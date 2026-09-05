@@ -15,6 +15,7 @@ const STATUSES = [
   { value: "OUT_FOR_DELIVERY", label: "Out for Delivery" },
   { value: "DELIVERED", label: "Delivered" },
   { value: "CANCELLED", label: "Cancelled" },
+  { value: "PAYMENT_ISSUE", label: "Payment Issue" },
   { value: "RETURNED", label: "Returned" },
   { value: "REFUNDED", label: "Refunded" },
 ];

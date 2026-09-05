@@ -31,12 +31,11 @@ export const orderService = {
       for (const item of data.items) {
         const product = productMap.get(item.productId)
         if (!product) throw new Error(`Product ${item.productId} not found`)
-        if (product.stock < item.quantity) throw new Error(`Insufficient stock for ${product.name}`)
-        
+
         const price = product.salePrice ?? product.price
         const itemTotal = new Prisma.Decimal(price.toString()).mul(item.quantity)
         subtotal = subtotal.add(itemTotal)
-        
+
         orderItemsData.push({
           productId: product.id,
           productName: product.name,
@@ -46,10 +45,13 @@ export const orderService = {
           total: itemTotal,
         })
 
-        await tx.product.update({
-          where: { id: product.id },
+        const updated = await tx.product.updateMany({
+          where: { id: product.id, stock: { gte: item.quantity } },
           data: { stock: { decrement: item.quantity } }
         })
+        if (updated.count === 0) {
+          throw new Error(`Insufficient stock for ${product.name}`)
+        }
       }
 
       let discountAmount = new Prisma.Decimal(0)
@@ -240,6 +242,26 @@ export const orderService = {
 
   async updateStatus(orderId: string, status: string, adminId: string, note?: string) {
     await db.$transaction(async (tx) => {
+      const current = await tx.order.findUnique({
+        where: { id: orderId },
+        select: { status: true }
+      })
+
+      if (status === 'CANCELLED' && current?.status !== 'CANCELLED') {
+        const order = await tx.order.findUnique({
+          where: { id: orderId },
+          include: { orderItems: true }
+        })
+        if (order) {
+          for (const item of order.orderItems) {
+            await tx.product.update({
+              where: { id: item.productId },
+              data: { stock: { increment: item.quantity } }
+            })
+          }
+        }
+      }
+
       await tx.order.update({
         where: { id: orderId },
         data: { status: status as any }
@@ -273,6 +295,7 @@ export const orderService = {
     await db.$transaction(async (tx) => {
       const order = await tx.order.findUnique({ where: { id: orderId }, include: { orderItems: true } })
       if (!order) return
+      if (order.status === 'CANCELLED') return
       
       for (const item of order.orderItems) {
         await tx.product.update({

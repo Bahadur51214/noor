@@ -40,7 +40,7 @@ const COLUMN_LABELS: Record<string, string> = {
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
   JAZZCASH: "JazzCash",
-  EASIPAISA: "EasyPaisa",
+  EASYPAISA: "EasyPaisa",
   BANK_TRANSFER: "Bank Transfer",
   COD: "Cash on Delivery",
 };
