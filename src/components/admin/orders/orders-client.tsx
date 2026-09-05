@@ -54,147 +54,147 @@ function escapeHtml(str: unknown): string {
     .replace(/'/g, "&#039;");
 }
 
-function buildShippingSheetHtml(orders: any[]): string {
-  const sheets = orders
-    .map((order) => {
-      const itemsHtml = order.orderItems
-        .map((item: any) => {
-          return `<tr>
-            <td>${escapeHtml(item.productName || "")}</td>
-            <td>${escapeHtml(item.sku || "")}</td>
-            <td>${escapeHtml(item.quantity)}</td>
-            <td>${escapeHtml((item.price ?? "").toLocaleString())}</td>
-            <td>${escapeHtml((item.total ?? "").toLocaleString())}</td>
-          </tr>`;
-        })
-        .join("");
-
-      const address = [order.address, order.area, order.city, order.landmark]
-        .filter(Boolean)
-        .join(", ");
-
-      const courier = order.courier || "";
-      const tracking = order.trackingNumber || "";
-      const paymentMethod =
-        PAYMENT_METHOD_LABELS[order.paymentMethod] || order.paymentMethod || "";
-
-      return `
-      <div class="sheet">
-        <div class="sheet-header">
-          <div>
-            <h1>NOOR Watches</h1>
-            <p>Shipping Sheet</p>
-          </div>
-          <div class="meta">
-            <p><strong>Order:</strong> ${escapeHtml(order.orderNumber)}</p>
-            <p><strong>Date:</strong> ${format(
-              new Date(order.createdAt),
-              "MMMM d, yyyy"
-            )}</p>
-          </div>
-        </div>
-
-        <h3>Deliver To</h3>
-        <table class="plain">
-          <tr>
-            <td class="lbl">Customer</td>
-            <td>${escapeHtml(order.customerName || "")}</td>
-          </tr>
-          <tr>
-            <td class="lbl">Phone</td>
-            <td>${escapeHtml(order.customerPhone || "")}</td>
-          </tr>
-          <tr>
-            <td class="lbl">Email</td>
-            <td>${escapeHtml(order.customerEmail || "")}</td>
-          </tr>
-          <tr>
-            <td class="lbl">Address</td>
-            <td>${escapeHtml(address)}</td>
-          </tr>
-        </table>
-
-        <h3>Items</h3>
-        <table class="items">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>SKU</th>
-              <th class="num">Qty</th>
-              <th class="num">Price</th>
-              <th class="num">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${itemsHtml}
-          </tbody>
-        </table>
-
-        <div class="totals">
-          <p>Subtotal: Rs. ${Number(order.subtotal).toLocaleString()}</p>
-          <p>Delivery Charges: Rs. ${Number(order.deliveryFee).toLocaleString()}</p>
-          ${
-            Number(order.discountAmount) > 0
-              ? `<p>Discount: - Rs. ${Number(order.discountAmount).toLocaleString()}</p>`
-              : ""
-          }
-          <p class="grand">Order Total: Rs. ${Number(order.total).toLocaleString()}</p>
-        </div>
-
-        <div class="footer">
-          <span>Payment: ${escapeHtml(paymentMethod)}</span>
-          ${
-            order.paymentMethod === "COD"
-              ? `<span class="collect">Collect Amount: Rs. ${Number(
-                  order.total
-                ).toLocaleString()}</span>`
-              : `<span>Prepaid (Advance)</span>`
-          }
-          ${
-            courier
-              ? `<span>Courier: ${escapeHtml(courier)}${
-                  tracking ? ` · ${escapeHtml(tracking)}` : ""
-                }</span>`
-              : ""
-          }
-        </div>
-      </div>`;
+function buildSheetHtml(order: any): string {
+  const itemsHtml = order.orderItems
+    .map((item: any) => {
+      return `<tr>
+        <td>${escapeHtml(item.productName || "")}</td>
+        <td>${escapeHtml(item.sku || "")}</td>
+        <td class="num">${escapeHtml(item.quantity)}</td>
+        <td class="num">${escapeHtml((item.price ?? "").toLocaleString())}</td>
+        <td class="num">${escapeHtml((item.total ?? "").toLocaleString())}</td>
+      </tr>`;
     })
     .join("");
+
+  const address = [order.address, order.area, order.city, order.landmark]
+    .filter(Boolean)
+    .join(", ");
+
+  const courier = order.courier || "";
+  const tracking = order.trackingNumber || "";
+  const paymentMethod =
+    PAYMENT_METHOD_LABELS[order.paymentMethod] || order.paymentMethod || "";
+
+  return `
+    <div class="sheet-header">
+      <div>
+        <h1>NOOR Watches</h1>
+        <p>Shipping Sheet</p>
+      </div>
+      <div class="meta">
+        <p><strong>Order:</strong> ${escapeHtml(order.orderNumber)}</p>
+        <p><strong>Date:</strong> ${format(new Date(order.createdAt), "MMMM d, yyyy")}</p>
+      </div>
+    </div>
+
+    <h3>Deliver To</h3>
+    <table class="plain">
+      <tr>
+        <td class="lbl">Customer</td>
+        <td>${escapeHtml(order.customerName || "")}</td>
+      </tr>
+      <tr>
+        <td class="lbl">Phone</td>
+        <td>${escapeHtml(order.customerPhone || "")}</td>
+      </tr>
+      <tr>
+        <td class="lbl">Email</td>
+        <td>${escapeHtml(order.customerEmail || "")}</td>
+      </tr>
+      <tr>
+        <td class="lbl">Address</td>
+        <td>${escapeHtml(address)}</td>
+      </tr>
+    </table>
+
+    <h3>Items</h3>
+    <table class="items">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>SKU</th>
+          <th class="num">Qty</th>
+          <th class="num">Price</th>
+          <th class="num">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsHtml}
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <p>Subtotal: Rs. ${Number(order.subtotal).toLocaleString()}</p>
+      <p>Delivery Charges: Rs. ${Number(order.deliveryFee).toLocaleString()}</p>
+      ${
+        Number(order.discountAmount) > 0
+          ? `<p>Discount: - Rs. ${Number(order.discountAmount).toLocaleString()}</p>`
+          : ""
+      }
+      <p class="grand">Order Total: Rs. ${Number(order.total).toLocaleString()}</p>
+    </div>
+
+    <div class="footer">
+      <span>Payment: ${escapeHtml(paymentMethod)}</span>
+      ${
+        order.paymentMethod === "COD"
+          ? `<span class="collect">Collect Amount: Rs. ${Number(order.total).toLocaleString()}</span>`
+          : `<span>Prepaid (Advance)</span>`
+      }
+      ${
+        courier
+          ? `<span>Courier: ${escapeHtml(courier)}${
+              tracking ? ` · ${escapeHtml(tracking)}` : ""
+            }</span>`
+          : ""
+      }
+    </div>`;
+}
+
+function buildShippingSheetHtml(orders: any[]): string {
+  const pages: string[] = [];
+  for (let i = 0; i < orders.length; i += 2) {
+    const pair = orders.slice(i, i + 2);
+    const sheets = pair.map((order) => {
+      return `<div class="sheet">${buildSheetHtml(order)}</div>`;
+    }).join("");
+    pages.push(`<div class="page">${sheets}</div>`);
+  }
 
   return `<!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8" />
   <title>Shipping Sheet</title>
   <style>
-    @page { margin: 12mm; }
+    @page { margin: 8mm; }
     body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #222; margin: 0; }
-    .sheet { page-break-after: always; margin-bottom: 24px; }
-    .sheet:last-child { page-break-after: auto; }
+    .page { page-break-after: always; margin-bottom: 20px; }
+    .page:last-child { page-break-after: auto; }
+    .sheet { width: 100%; box-sizing: border-box; border: 1px solid #bbb; border-radius: 6px; padding: 12px; margin-bottom: 12px; page-break-inside: avoid; }
+    .sheet:last-child { margin-bottom: 0; }
     .sheet-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #0D0D0D; padding-bottom: 8px; margin-bottom: 10px; }
-    .sheet-header h1 { margin: 0; font-size: 20px; letter-spacing: 1px; }
+    .sheet-header h1 { margin: 0; font-size: 18px; letter-spacing: 1px; }
     .sheet-header p { margin: 0; color: #555; }
     .meta { text-align: right; }
-    .meta p { margin: 2px 0; }
-    h3 { margin: 14px 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #0D0D0D; }
+    .meta p { margin: 2px 0; font-size: 11px; }
+    h3 { margin: 12px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #0D0D0D; }
     table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #bbb; padding: 6px; text-align: left; }
+    th, td { border: 1px solid #bbb; padding: 5px; text-align: left; font-size: 11px; }
     th { background: #f0f0f0; }
     td.num, th.num { text-align: right; }
-    table.plain td { border: none; padding: 3px 6px; }
-    table.plain td.lbl { width: 110px; color: #555; }
-    .totals { text-align: right; margin: 10px 0; }
-    .totals p { margin: 2px 0; }
-    .totals .grand { font-weight: bold; font-size: 14px; border-top: 1px solid #999; padding-top: 4px; }
-    .footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid #ccc; padding-top: 8px; font-size: 11px; color: #444; }
-    .footer .collect { font-weight: bold; color: #0D0D0D; border: 1px solid #0D0D0D; padding: 4px 10px; border-radius: 4px; }
+    table.plain td { border: none; padding: 3px 4px; }
+    table.plain td.lbl { width: 90px; color: #555; }
+    .totals { text-align: right; margin: 8px 0; }
+    .totals p { margin: 2px 0; font-size: 11px; }
+    .totals .grand { font-weight: bold; font-size: 13px; border-top: 1px solid #999; padding-top: 4px; }
+    .footer { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; border-top: 1px solid #ccc; padding-top: 8px; font-size: 11px; color: #444; }
+    .footer .collect { font-weight: bold; color: #0D0D0D; border: 1px solid #0D0D0D; padding: 3px 8px; border-radius: 4px; }
   </style>
 </head>
 <body>
-  ${sheets}
-  <script>
-    window.onload = function() { window.print(); };
-  </script>
+  ${pages.join("")}
 </body>
 </html>`;
 }
@@ -322,49 +322,68 @@ export function OrdersClient({
     }
   };
 
-  const handlePrint = async (type: "selected" | "filtered") => {
-    await doPrint({
+  const handleDownload = async (type: "selected" | "filtered") => {
+    await downloadShipment({
       orderIds: type === "selected" ? selectedIds : undefined,
       filters: type === "filtered" ? filters : undefined,
     });
   };
 
-  const handlePrintOne = async (orderId: string) => {
-    await doPrint({ orderIds: [orderId] });
+  const handleDownloadOne = async (orderId: string) => {
+    await downloadShipment({ orderIds: [orderId] });
   };
 
-  const doPrint = async ({
+  const downloadShipment = async ({
     orderIds,
     filters,
   }: {
     orderIds?: string[];
     filters?: any;
   }) => {
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) {
-      toast.error(
-        "Pop-up blocked. Please allow pop-ups for this site and try again."
-      );
-      return;
-    }
-
     try {
       setExportLoading(true);
       const data = await exportOrdersAction({ orderIds, filters });
 
       if (!data || data.length === 0) {
-        printWindow.close();
-        toast.error("No orders found to print.");
+        toast.error("No orders found to download.");
         return;
       }
 
-      printWindow.document.open();
-      printWindow.document.write(buildShippingSheetHtml(data));
-      printWindow.document.close();
-      printWindow.focus();
+      const html2pdf = (await import("html2pdf.js")).default;
+
+      const container = document.createElement("div");
+      container.innerHTML = buildShippingSheetHtml(data);
+      container.style.position = "absolute";
+      container.style.left = "-10000px";
+      container.style.top = "0";
+      container.style.width = "200mm";
+      document.body.appendChild(container);
+
+      await html2pdf()
+        .set({
+          margin: [5, 5, 5, 5],
+          filename: `shipping_sheet_${format(new Date(), "yyyyMMdd_HHmm")}.pdf`,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: "#FFFFFF",
+          },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+        })
+        .from(container)
+        .save();
+
+      document.body.removeChild(container);
+      toast.success(
+        data.length > 1
+          ? `${data.length} shipping sheets downloaded as PDF`
+          : "Shipping sheet downloaded as PDF"
+      );
     } catch (e) {
-      printWindow.close();
-      toast.error("Print failed.");
+      toast.error("Failed to generate PDF.");
+      document.querySelector("div[style*='-10000px']")?.remove();
     } finally {
       setExportLoading(false);
     }
@@ -376,12 +395,12 @@ export function OrdersClient({
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            onClick={() => handlePrint("filtered")}
+            onClick={() => handleDownload("filtered")}
             disabled={exportLoading}
             className="flex items-center gap-2"
           >
-            <Printer className="w-4 h-4" />
-            {exportLoading ? "Preparing..." : "Print Shipping Sheet"}
+            <Download className="w-4 h-4" />
+            {exportLoading ? "Preparing..." : "Download Shipping Sheet"}
           </Button>
           <Dialog open={exportModalOpen} onOpenChange={setExportModalOpen}>
             <DialogTrigger asChild>
@@ -446,12 +465,12 @@ export function OrdersClient({
                   </Button>
                   <Button
                     variant="secondary"
-                    onClick={() => handlePrint("selected")}
+                    onClick={() => handleDownload("selected")}
                     disabled={selectedIds.length === 0 || exportLoading}
                     className="ml-auto flex items-center gap-2"
                   >
-                    <Printer className="w-4 h-4" />
-                    Print Selected ({selectedIds.length})
+                    <Download className="w-4 h-4" />
+                    Download Selected ({selectedIds.length})
                   </Button>
                 </div>
               </div>
@@ -516,12 +535,12 @@ export function OrdersClient({
                   <div className="flex items-center justify-end gap-3">
                     <button
                       type="button"
-                      onClick={() => handlePrintOne(order.id)}
+                      onClick={() => handleDownloadOne(order.id)}
                       disabled={exportLoading}
-                      title="Print shipping sheet"
+                      title="Download shipping sheet"
                       className="text-gray-400 hover:text-[#C9A96E] disabled:opacity-50"
                     >
-                      <Printer className="w-4 h-4" />
+                      <Download className="w-4 h-4" />
                     </button>
                     <Link href={`/admin/orders/${order.id}`} className="text-[#C9A96E] hover:underline font-medium">
                       View
