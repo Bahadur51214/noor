@@ -1,13 +1,36 @@
+const ORDERED_SPEC_FIELDS = [
+  "Dial Color",
+  "Movement",
+  "Strap Material",
+  "Strap Color",
+  "Back Case",
+  "Water Resistance",
+  "Color Warranty",
+  "Box",
+  "Gender",
+  "Quality",
+  "Style",
+];
+
 export function ProductSpecifications({
   specifications,
 }: {
   specifications: Record<string, string> | null | undefined;
 }) {
-  const entries = specifications
+  const rawEntries = specifications
     ? Object.entries(specifications).filter(
-        ([label, value]) => label.trim() && value.trim()
+        ([label, value]) => label.trim() && value?.trim()
       )
     : [];
+
+  const entries = [...rawEntries].sort(([a], [b]) => {
+    const idxA = ORDERED_SPEC_FIELDS.indexOf(a);
+    const idxB = ORDERED_SPEC_FIELDS.indexOf(b);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    return a.localeCompare(b);
+  });
 
   if (entries.length === 0) {
     return (

@@ -43,6 +43,18 @@ export function ProductInformation({
       content:
         loveIt.structured && loveIt.blocks.length > 0 ? (
           <DescriptionBlocks blocks={loveIt.blocks} />
+        ) : loveIt.plainText.trim() ? (
+          <div className="space-y-3">
+            {loveIt.plainText
+              .split(/\n+/)
+              .map((p) => p.trim())
+              .filter(Boolean)
+              .map((p, i) => (
+                <p key={i} className="text-sm text-gray-600 leading-relaxed">
+                  {p}
+                </p>
+              ))}
+          </div>
         ) : (
           <p className="text-sm text-gray-600 leading-relaxed">
             No highlights yet for this product.
@@ -82,19 +94,21 @@ export function ProductInformation({
             <button
               type="button"
               onClick={() => setOpen(isOpen ? null : section.id)}
-              className="flex w-full items-center justify-between px-5 py-4 text-left cursor-pointer"
+              aria-expanded={isOpen}
+              aria-controls={`section-${section.id}`}
+              className="group flex w-full items-center justify-between px-5 py-4 text-left cursor-pointer transition-colors hover:bg-[#F7F4EF]/40"
             >
-              <span className="font-serif text-base font-semibold text-[#0D0D0D] tracking-wide">
+              <span className="font-serif text-base font-semibold text-[#0D0D0D] tracking-wide transition-colors group-hover:text-[#C9A96E]">
                 {section.title}
               </span>
               <ChevronDown
-                className={`h-5 w-5 text-[#C9A96E] transition-transform ${
+                className={`h-5 w-5 text-[#C9A96E] transition-transform duration-200 ${
                   isOpen ? "rotate-180" : ""
                 }`}
               />
             </button>
             {isOpen && (
-              <div className="px-5 pb-5">
+              <div id={`section-${section.id}`} className="px-5 pb-5">
                 {section.content}
               </div>
             )}
