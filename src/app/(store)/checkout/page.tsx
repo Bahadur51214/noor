@@ -75,6 +75,7 @@ export default function CheckoutPage() {
     jazzcash: '',
   })
   const [whatsapp, setWhatsapp] = useState('')
+  const [orderPlaced, setOrderPlaced] = useState(false)
   
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -95,7 +96,7 @@ export default function CheckoutPage() {
   
   useEffect(() => {
     setMounted(true)
-    if (items.length === 0 && mounted) {
+    if (items.length === 0 && mounted && !orderPlaced) {
       router.push('/cart')
     }
     getPublicStoreSettings().then((settings) => {
@@ -110,7 +111,7 @@ export default function CheckoutPage() {
         jazzcash: accounts.jazzcash,
       })
     })
-  }, [items, router, mounted])
+  }, [items, router, mounted, orderPlaced])
 
   if (!mounted) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>
   if (items.length === 0) return null
@@ -127,6 +128,7 @@ export default function CheckoutPage() {
       const result = await submitCheckout(data, cartItems)
       
       if (result.success && result.orderNumber) {
+        setOrderPlaced(true)
         clearCart()
         router.push(`/order-success?orderNumber=${result.orderNumber}`)
       } else {
