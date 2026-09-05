@@ -1,10 +1,12 @@
 import { productService } from "@/services/product.service"
+import { reviewService } from "@/services/review.service"
 import { notFound } from "next/navigation"
 import { Metadata } from "next"
 import { Truck, Banknote, RefreshCw } from "lucide-react"
 import { AddToCartButton } from "./add-to-cart-button"
 import { ProductImageGallery } from "@/components/store/product/product-image-gallery"
 import { ProductDescription } from "@/components/store/product/product-description"
+import { ProductReviews } from "@/components/store/product/product-reviews"
 import { Badge } from "@/components/ui/badge"
 
 interface ProductPageProps {
@@ -22,12 +24,20 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 
   return {
-    title: `${product.name} | NOOR`,
-    description: product.description || `Buy ${product.name} at NOOR`,
+    title: product.seoTitle || `${product.name} | NOOR`,
+    description:
+      product.seoDescription ||
+      product.shortDescription ||
+      product.description ||
+      `Buy ${product.name} at NOOR`,
     alternates: { canonical: `/product/${product.slug}` },
     openGraph: {
-      title: `${product.name} | NOOR`,
-      description: product.description || `Buy ${product.name} at NOOR`,
+      title: product.seoTitle || `${product.name} | NOOR`,
+      description:
+        product.seoDescription ||
+        product.shortDescription ||
+        product.description ||
+        `Buy ${product.name} at NOOR`,
       url: `/product/${product.slug}`,
       type: 'website',
       images: product.images[0]?.url
@@ -44,6 +54,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) {
     notFound()
   }
+
+  const [reviews, ratingInfo] = await Promise.all([
+    reviewService.getForProduct(product.id),
+    reviewService.getAverageRating(product.id),
+  ])
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://noorwatches.com'
 
@@ -130,6 +145,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       </div>
+
+      <ProductReviews
+        productId={product.id}
+        reviews={reviews as any}
+        average={ratingInfo.average}
+        reviewCount={ratingInfo.count}
+      />
       </div>
     </>
   )

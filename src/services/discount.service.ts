@@ -6,7 +6,7 @@ export const discountService = {
     if (!discount || !discount.active) {
       return { valid: false, message: 'Invalid or inactive discount code' }
     }
-    if (discount.usedCount >= (discount.usageLimit || 0)) {
+    if (discount.usageLimit !== null && discount.usedCount >= discount.usageLimit) {
       return { valid: false, message: 'Discount code usage limit reached' }
     }
     if (discount.startDate && new Date() < discount.startDate) {
@@ -21,12 +21,12 @@ export const discountService = {
     
     let discountAmount = 0
     if (discount.type === 'PERCENTAGE') {
-      discountAmount = orderTotal * (Number(discount.amount) / 100)
+      discountAmount = Math.round(orderTotal * (Number(discount.amount) / 100))
     } else {
-      discountAmount = Number(discount.amount)
+      discountAmount = Math.round(Number(discount.amount))
     }
     if (discount.maxDiscount && discountAmount > Number(discount.maxDiscount)) {
-      discountAmount = Number(discount.maxDiscount)
+      discountAmount = Math.round(Number(discount.maxDiscount))
     }
 
     return { valid: true, discount, discountAmount }

@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCart } from '@/hooks/use-cart'
 import { submitCheckout } from '@/actions/checkout.actions'
+import { validateDiscountAction } from '@/actions/store.actions'
 import { getPublicStoreSettings, getPublicPaymentSettings } from '@/actions/public.actions'
 import { checkoutFormSchema, CheckoutFormValues } from '@/schemas/checkout.schema'
 import { toWhatsAppLink } from '@/lib/utils'
@@ -76,6 +77,10 @@ export default function CheckoutPage() {
   })
   const [whatsapp, setWhatsapp] = useState('')
   const [orderPlaced, setOrderPlaced] = useState(false)
+  const [couponCode, setCouponCode] = useState('')
+  const [discountAmount, setDiscountAmount] = useState(0)
+  const [couponError, setCouponError] = useState('')
+  const [couponLoading, setCouponLoading] = useState(false)
   
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -118,14 +123,46 @@ export default function CheckoutPage() {
 
   const subtotal = getSubtotal()
   const deliveryFee = paymentMethod === PaymentMethod.COD ? codDeliveryFee : advanceDeliveryFee
-  const total = subtotal + deliveryFee
+  const total = Math.max(0, subtotal - discountAmount) + deliveryFee
+
+  const applyCoupon = async () => {
+    const code = couponCode.trim()
+    if (!code) {
+      setCouponError('Enter a coupon code')
+      return
+    }
+    setCouponLoading(true)
+    setCouponError('')
+    try {
+      const result = await validateDiscountAction(code, subtotal)
+      if (result.success) {
+        setDiscountAmount(result.discountAmount)
+        setCouponCode(result.code)
+        toast.success(`Coupon applied — Rs. ${result.discountAmount.toLocaleString()} off`)
+      } else {
+        setDiscountAmount(0)
+        setCouponError(result.message)
+        toast.error(result.message)
+      }
+    } catch {
+      setCouponError('Failed to apply coupon')
+    } finally {
+      setCouponLoading(false)
+    }
+  }
+
+  const removeCoupon = () => {
+    setCouponCode('')
+    setDiscountAmount(0)
+    setCouponError('')
+  }
 
   const onSubmit = async (data: CheckoutFormValues) => {
     setIsSubmitting(true)
     try {
       const cartItems = items.map(i => ({ productId: i.productId, quantity: i.quantity }))
       
-      const result = await submitCheckout(data, cartItems)
+      const result = await submitCheckout(data, cartItems, undefined, discountAmount > 0 ? couponCode : undefined)
       
       if (result.success && result.orderNumber) {
         setOrderPlaced(true)
@@ -415,6 +452,53 @@ export default function CheckoutPage() {
                   <span className="font-medium">Rs. {deliveryFee}</span>
                 )}
               </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-[#C9A96E]">Discount ({couponCode})</span>
+                  <span className="font-medium text-[#C9A96E]">- Rs. {discountAmount.toLocaleString()}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-4 mt-4 border-t border-gray-200">
+              {discountAmount > 0 ? (
+                <div className="flex items-center justify-between rounded-md bg-emerald-50 border border-emerald-200 px-3 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-emerald-700">{couponCode}</span>
+                    <span className="text-xs text-emerald-600">- Rs. {discountAmount.toLocaleString()}</span>
+                  </div>
+                  <button
+                    onClick={removeCoupon}
+                    className="text-xs text-gray-500 hover:text-red-600 underline"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <label className="text-sm font-medium text-gray-600 block mb-1.5">Coupon Code</label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={couponCode}
+                      onChange={(e) => {
+                        setCouponCode(e.target.value)
+                        setCouponError('')
+                      }}
+                      placeholder="Enter coupon code"
+                      className="bg-white"
+                    />
+                    <Button
+                      onClick={applyCoupon}
+                      disabled={couponLoading}
+                      variant="outline"
+                      className="rounded-none border-[#0D0D0D] text-[#0D0D0D] hover:bg-[#0D0D0D] hover:text-white whitespace-nowrap"
+                    >
+                      {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
+                    </Button>
+                  </div>
+                  {couponError && <p className="text-xs text-red-600 mt-1.5">{couponError}</p>}
+                </div>
+              )}
             </div>
             
             <div className="border-t border-gray-200 pt-4 mt-4">

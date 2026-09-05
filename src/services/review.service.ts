@@ -1,12 +1,12 @@
 import { db } from '@/lib/db'
 
 export const reviewService = {
-  async submit(productId: string, data: any) {
+  async submit(productId: string, data: any, status: 'PENDING' | 'APPROVED' = 'PENDING') {
     await db.review.create({
       data: {
         productId,
         ...data,
-        status: 'PENDING'
+        status,
       }
     })
   },

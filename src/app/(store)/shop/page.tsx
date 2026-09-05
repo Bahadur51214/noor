@@ -4,16 +4,36 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Metadata } from "next"
 
-export const metadata: Metadata = {
-  title: 'Shop | NOOR',
-  description: 'Explore our collection of luxury women\'s watches.',
-  alternates: { canonical: '/shop' },
-}
-
 export const revalidate = 60
 
 interface ShopPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export async function generateMetadata({ searchParams }: ShopPageProps): Promise<Metadata> {
+  const params = await searchParams
+  const category = typeof params.category === 'string' ? params.category : undefined
+  const search = typeof params.search === 'string' ? params.search : undefined
+
+  const prettyCategory = category
+    ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+    : undefined
+
+  const title = search
+    ? `Search: ${search}`
+    : prettyCategory
+      ? `${prettyCategory} Watches`
+      : 'Shop'
+
+  return {
+    title: `${title} | NOOR`,
+    description: search
+      ? `Search results for "${search}" in NOOR's luxury women's watch collection.`
+      : prettyCategory
+        ? `Browse ${prettyCategory.toLowerCase()} watches at NOOR. Elegant timepieces with delivery across Pakistan.`
+        : 'Explore our collection of luxury women\'s watches.',
+    alternates: { canonical: '/shop' },
+  }
 }
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {

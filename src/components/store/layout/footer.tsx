@@ -108,7 +108,7 @@ export default async function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/shop?featured=true" className="transition-colors hover:text-[#C9A96E]">
+                  <Link href="/shop?sort=newest" className="transition-colors hover:text-[#C9A96E]">
                     New Arrivals
                   </Link>
                 </li>

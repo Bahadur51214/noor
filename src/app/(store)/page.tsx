@@ -4,8 +4,29 @@ import { productService } from "@/services/product.service"
 import { settingsService } from "@/services/settings.service"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Metadata } from "next"
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: 'NOOR — Premium Women\'s Watches',
+  description:
+    'Discover NOOR\'s collection of luxury women\'s watches in Pakistan. Elegant timepieces with fast delivery and cash on delivery across the country.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'NOOR — Premium Women\'s Watches',
+    description:
+      'Discover NOOR\'s collection of luxury women\'s watches in Pakistan. Elegant timepieces with fast delivery and cash on delivery across the country.',
+    url: '/',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NOOR — Premium Women\'s Watches',
+    description:
+      'Discover NOOR\'s collection of luxury women\'s watches in Pakistan. Elegant timepieces with fast delivery and cash on delivery across the country.',
+  },
+}
 
 export default async function HomePage() {
   const [featuredProducts, newArrivals, bestSellers, heroImageSetting] = await Promise.all([

@@ -2,6 +2,7 @@ import { db } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 import { randomInt } from 'crypto'
 import { emailService } from './email.service'
+import { discountService } from './discount.service'
 
 async function generateUniqueOrderNumber(tx: Prisma.TransactionClient) {
   const prefix = 'NOOR'
@@ -56,23 +57,23 @@ export const orderService = {
       }
 
       let discountAmount = new Prisma.Decimal(0)
+      let appliedDiscountId: string | null = null
+      let appliedDiscountCode: string | null = null
       if (data.discountCode) {
-        const discount = await tx.discount.findUnique({ where: { code: data.discountCode } })
-        if (discount && discount.active) {
-          const usageLimit = discount.usageLimit ?? Number.MAX_SAFE_INTEGER
-          if (discount.usedCount < usageLimit) {
-            if (discount.type === 'PERCENTAGE') {
-              discountAmount = subtotal.mul(discount.amount.div(100))
-            } else {
-              discountAmount = discount.amount
-            }
-            const claimed = await tx.discount.updateMany({
-              where: { id: discount.id, usedCount: { lt: usageLimit } },
-              data: { usedCount: { increment: 1 } }
-            })
-            if (claimed.count === 0) {
-              discountAmount = new Prisma.Decimal(0)
-            }
+        const result = await discountService.validate(data.discountCode, Number(subtotal))
+        if (result.valid) {
+          const claimed = await tx.discount.updateMany({
+            where: {
+              id: result.discount.id,
+              active: true,
+              usedCount: { lt: result.discount.usageLimit ?? Number.MAX_SAFE_INTEGER },
+            },
+            data: { usedCount: { increment: 1 } }
+          })
+          if (claimed.count > 0) {
+            discountAmount = new Prisma.Decimal(result.discountAmount)
+            appliedDiscountId = result.discount.id
+            appliedDiscountCode = result.discount.code
           }
         }
       }
@@ -130,9 +131,21 @@ export const orderService = {
           status: 'PENDING',
           paymentStatus: data.paymentMethod === 'COD' ? 'PENDING' : 'PENDING_VERIFICATION',
           paymentMethod: data.paymentMethod,
+          discountId: appliedDiscountId,
+          discountCode: appliedDiscountCode,
           orderItems: {
             create: orderItemsData
           },
+          ...(appliedDiscountId
+            ? {
+                discountUsages: {
+                  create: {
+                    discountId: appliedDiscountId,
+                    amount: discountAmount,
+                  }
+                }
+              }
+            : {}),
           orderStatusHistories: {
             create: {
               status: 'PENDING',
