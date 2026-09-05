@@ -201,7 +201,27 @@ export const orderService = {
     const where: Prisma.OrderWhereInput = {
       ...(params.status ? { status: params.status as any } : {}),
       ...(params.paymentStatus ? { paymentStatus: params.paymentStatus as any } : {}),
-      ...(params.search ? { orderNumber: { contains: params.search } } : {})
+      ...(params.search
+        ? {
+            OR: [
+              { orderNumber: { contains: params.search, mode: 'insensitive' } },
+              { customerName: { contains: params.search, mode: 'insensitive' } },
+              { customerPhone: { contains: params.search } },
+            ],
+          }
+        : {}),
+      ...(params.city ? { city: { contains: params.city, mode: 'insensitive' } } : {}),
+      ...(params.courier ? { courier: { contains: params.courier, mode: 'insensitive' } } : {}),
+    }
+
+    if (params.dateFrom || params.dateTo) {
+      where.createdAt = {}
+      if (params.dateFrom) where.createdAt.gte = new Date(params.dateFrom)
+      if (params.dateTo) {
+        const toDate = new Date(params.dateTo)
+        toDate.setHours(23, 59, 59, 999)
+        where.createdAt.lte = toDate
+      }
     }
 
     const [orders, total] = await Promise.all([

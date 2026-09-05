@@ -57,8 +57,11 @@ export default async function AdminOrdersPage({
               <option value="CONFIRMED">Confirmed</option>
               <option value="PROCESSING">Processing</option>
               <option value="SHIPPED">Shipped</option>
+              <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
               <option value="DELIVERED">Delivered</option>
               <option value="CANCELLED">Cancelled</option>
+              <option value="RETURNED">Returned</option>
+              <option value="REFUNDED">Refunded</option>
             </select>
           </div>
           <div>
