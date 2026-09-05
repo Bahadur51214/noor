@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { MultiImageUpload } from "@/components/ui/multi-image-upload";
 import { RichTextEditor } from "@/components/admin/products/rich-text-editor";
 import { toast } from "sonner";
+import { Plus, X } from "lucide-react";
 import { generateSlug } from "@/lib/utils";
 
 const formSchema = z.object({
@@ -57,6 +58,7 @@ interface ProductFormProps {
     newArrival: boolean;
     seoTitle?: string | null;
     seoDescription?: string | null;
+    specifications?: Record<string, string> | null;
     images?: Array<{ url: string }>;
   };
   categories: Array<{ id: string; name: string }>;
@@ -66,6 +68,15 @@ export function ProductForm({ product, categories }: ProductFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const isEditing = !!product;
+  const [specRows, setSpecRows] = useState<Array<{ label: string; value: string }>>(
+    () =>
+      product?.specifications
+        ? Object.entries(product.specifications).map(([label, value]) => ({
+            label,
+            value,
+          }))
+        : []
+  );
 
   const {
     register,
@@ -109,9 +120,29 @@ export function ProductForm({ product, categories }: ProductFormProps) {
 
   const name = watch("name");
 
+  function addSpecRow() {
+    setSpecRows((rows) => [...rows, { label: "", value: "" }]);
+  }
+
+  function updateSpecRow(index: number, field: "label" | "value", value: string) {
+    setSpecRows((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, [field]: value } : row))
+    );
+  }
+
+  function removeSpecRow(index: number) {
+    setSpecRows((rows) => rows.filter((_, i) => i !== index));
+  }
+
   async function onSubmit(data: FormData) {
     setLoading(true);
     try {
+      const specs = Object.fromEntries(
+        specRows
+          .filter((row) => row.label.trim() && row.value.trim())
+          .map((row) => [row.label.trim(), row.value.trim()])
+      );
+
       const cleanData = {
         ...data,
         categoryId: data.categoryId ? data.categoryId : null,
@@ -119,6 +150,8 @@ export function ProductForm({ product, categories }: ProductFormProps) {
           data.salePrice === "" ? undefined : data.salePrice || undefined,
         costPrice:
           data.costPrice === "" ? undefined : data.costPrice || undefined,
+        specifications:
+          Object.keys(specs).length > 0 ? specs : null,
         images: data.images.map((url, index) => ({ url, sortOrder: index })),
       };
 
@@ -230,6 +263,62 @@ export function ProductForm({ product, categories }: ProductFormProps) {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Specifications */}
+          <div className="rounded-lg border border-[#E0DCD5] bg-white p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-serif text-lg font-semibold">
+                Specifications
+              </h3>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addSpecRow}
+                className="flex items-center gap-1"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Add Row
+              </Button>
+            </div>
+            {specRows.length === 0 ? (
+              <p className="text-sm text-gray-500">
+                No specifications added. Technical specs will appear on the
+                product page.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {specRows.map((row, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2"
+                  >
+                    <Input
+                      value={row.label}
+                      onChange={(e) => updateSpecRow(i, "label", e.target.value)}
+                      placeholder="e.g. Weight"
+                      className="flex-1"
+                    />
+                    <Input
+                      value={row.value}
+                      onChange={(e) => updateSpecRow(i, "value", e.target.value)}
+                      placeholder="e.g. 60g"
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeSpecRow(i)}
+                      className="shrink-0 text-gray-400 hover:text-red-500"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Pricing */}

@@ -26,6 +26,12 @@ export default async function EditProductPage({
     price: Number(product.price),
     salePrice: product.salePrice ? Number(product.salePrice) : null,
     costPrice: product.costPrice ? Number(product.costPrice) : null,
+    specifications:
+      product.specifications &&
+      typeof product.specifications === "object" &&
+      !Array.isArray(product.specifications)
+        ? (product.specifications as Record<string, string>)
+        : null,
   };
 
   return (

@@ -6,6 +6,7 @@ import { Truck, Banknote, RefreshCw, Star } from "lucide-react"
 import { AddToCartButton } from "./add-to-cart-button"
 import { ProductImageGallery } from "@/components/store/product/product-image-gallery"
 import { ProductDescription } from "@/components/store/product/product-description"
+import { ProductSpecifications } from "@/components/store/product/product-specifications"
 import { ProductReviews } from "@/components/store/product/product-reviews"
 import { Badge } from "@/components/ui/badge"
 
@@ -144,6 +145,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           <div className="mb-8">
             <ProductDescription description={product.description} />
+          </div>
+
+          <div className="mb-8">
+            <ProductSpecifications
+              specifications={
+                product.specifications &&
+                typeof product.specifications === "object" &&
+                !Array.isArray(product.specifications)
+                  ? (product.specifications as Record<string, string>)
+                  : null
+              }
+            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-6 border-t border-b border-gray-100 mb-8">
