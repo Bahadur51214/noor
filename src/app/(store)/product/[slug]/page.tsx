@@ -5,7 +5,6 @@ import { Metadata } from "next"
 import { Truck, Banknote, RefreshCw, Star } from "lucide-react"
 import { AddToCartButton } from "./add-to-cart-button"
 import { ProductImageGallery } from "@/components/store/product/product-image-gallery"
-import { ProductDescription } from "@/components/store/product/product-description"
 import { ProductInformation } from "@/components/store/product/product-information"
 import { ProductReviews } from "@/components/store/product/product-reviews"
 import { Badge } from "@/components/ui/badge"
@@ -147,12 +146,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <p className="mb-8 text-[15px] leading-relaxed text-gray-600">
               {product.shortDescription}
             </p>
-          )}
-
-          {product.description && (
-            <div className="mb-8">
-              <ProductDescription description={product.description} />
-            </div>
           )}
 
           <div className="mb-8">
