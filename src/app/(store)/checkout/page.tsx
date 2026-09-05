@@ -150,11 +150,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="fullName"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FieldLabel>Full Name</FieldLabel>
                         <FormControl>
-                          <Input placeholder={fieldState.error ? '' : 'John Doe'} {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -164,11 +164,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="phone"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FieldLabel>Phone Number</FieldLabel>
                         <FormControl>
-                          <Input placeholder={fieldState.error ? '' : '03001234567'} {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -178,11 +178,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="email"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem className="md:col-span-2">
                         <FieldLabel>Email (Optional)</FieldLabel>
                         <FormControl>
-                          <Input placeholder={fieldState.error ? '' : 'john@example.com'} type="email" {...field} />
+                          <Input type="email" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -192,11 +192,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="city"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FieldLabel>City</FieldLabel>
                         <FormControl>
-                          <Input placeholder={fieldState.error ? '' : 'Lahore'} {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -206,11 +206,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="area"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FieldLabel>Area</FieldLabel>
                         <FormControl>
-                          <Input placeholder={fieldState.error ? '' : 'Gulberg'} {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -220,11 +220,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="address"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem className="md:col-span-2">
                         <FieldLabel>Full Address</FieldLabel>
                         <FormControl>
-                          <Textarea placeholder={fieldState.error ? '' : 'House 123, Street 4...'} {...field} />
+                          <Textarea {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -234,11 +234,11 @@ export default function CheckoutPage() {
                   <FormField
                     control={form.control}
                     name="landmark"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem className="md:col-span-2">
                         <FieldLabel>Nearest Landmark (Optional)</FieldLabel>
                         <FormControl>
-                          <Input placeholder={fieldState.error ? '' : 'Near ABC School'} {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -325,11 +325,11 @@ export default function CheckoutPage() {
                         <FormField
                           control={paymentRefForm.control}
                           name="senderName"
-                          render={({ field, fieldState }) => (
+                          render={({ field }) => (
                             <FormItem>
                               <FieldLabel>Sender Account Name</FieldLabel>
                               <FormControl>
-                                <Input placeholder={fieldState.error ? '' : 'Ali Khan'} {...field} />
+                                <Input {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -338,11 +338,11 @@ export default function CheckoutPage() {
                         <FormField
                           control={paymentRefForm.control}
                           name="transactionId"
-                          render={({ field, fieldState }) => (
+                          render={({ field }) => (
                             <FormItem>
                               <FieldLabel>Transaction ID (TID)</FieldLabel>
                               <FormControl>
-                                <Input placeholder={fieldState.error ? '' : '1234567890'} {...field} />
+                                <Input {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
