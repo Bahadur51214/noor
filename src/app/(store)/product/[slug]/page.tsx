@@ -2,7 +2,7 @@ import { productService } from "@/services/product.service"
 import { reviewService } from "@/services/review.service"
 import { notFound } from "next/navigation"
 import { Metadata } from "next"
-import { Truck, Banknote, RefreshCw } from "lucide-react"
+import { Truck, Banknote, RefreshCw, Star } from "lucide-react"
 import { AddToCartButton } from "./add-to-cart-button"
 import { ProductImageGallery } from "@/components/store/product/product-image-gallery"
 import { ProductDescription } from "@/components/store/product/product-description"
@@ -102,6 +102,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
           
           <h1 className="text-3xl md:text-4xl font-serif text-[#0D0D0D] mb-4">{product.name}</h1>
+
+          {ratingInfo.count > 0 && (
+            <a href="#reviews" className="inline-flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity" aria-label={`${ratingInfo.average.toFixed(1)} out of 5 stars, ${ratingInfo.count} reviews`}>
+              <span className="flex items-center gap-0.5">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star
+                    key={i}
+                    className={`w-4 h-4 ${i <= Math.round(ratingInfo.average) ? "fill-[#C9A96E] text-[#C9A96E]" : "fill-gray-200 text-gray-200"}`}
+                  />
+                ))}
+              </span>
+              <span className="text-sm font-medium text-[#0D0D0D]">{ratingInfo.average.toFixed(1)}</span>
+              <span className="text-sm text-gray-500">
+                ({ratingInfo.count} review{ratingInfo.count === 1 ? "" : "s"})
+              </span>
+            </a>
+          )}
           
           <div className="flex items-center gap-4 mb-6">
             {isSale ? (
@@ -146,12 +163,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       </div>
 
+      <div id="reviews" className="scroll-mt-24">
       <ProductReviews
         productId={product.id}
         reviews={reviews as any}
         average={ratingInfo.average}
         reviewCount={ratingInfo.count}
       />
+      </div>
       </div>
     </>
   )
