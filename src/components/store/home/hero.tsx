@@ -21,7 +21,7 @@ export function Hero({ initialImage }: HeroProps) {
   }, [])
 
   return (
-    <section className="relative w-full aspect-[16/9] overflow-hidden bg-[#0D0D0D]">
+    <section className="relative w-full shrink-0 aspect-[16/9] max-h-[560px] overflow-hidden bg-[#0D0D0D]">
       <Link href="/shop" className="block relative w-full h-full cursor-pointer">
         <Image
           src={image}
