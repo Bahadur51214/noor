@@ -71,7 +71,7 @@ export function SearchDialog() {
       <Button
         variant="ghost"
         size="icon"
-        className="hidden sm:inline-flex"
+        className="inline-flex"
         onClick={() => setOpen(true)}
         aria-label="Search products"
       >
