@@ -21,13 +21,14 @@ export function Hero({ initialImage }: HeroProps) {
   }, [])
 
   return (
-    <section className="relative w-full shrink-0 aspect-[16/9] max-h-[560px] overflow-hidden bg-[#0D0D0D]">
-      <Link href="/shop" className="block relative w-full h-full cursor-pointer">
+    <section className="relative w-full shrink-0 overflow-hidden bg-[#0D0D0D]">
+      <Link href="/shop" className="block relative w-full cursor-pointer">
         <Image
           src={image}
           alt="NOOR Watches"
-          fill
-          className="object-cover object-center"
+          width={1920}
+          height={1080}
+          className="w-full h-auto object-contain object-center"
           priority
           sizes="100vw"
         />
