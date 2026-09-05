@@ -162,41 +162,34 @@ function buildShippingSheetHtml(orders: any[]): string {
     pages.push(`<div class="page">${sheets}</div>`);
   }
 
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>Shipping Sheet</title>
-  <style>
+  return `<style>
     @page { margin: 8mm; }
-    body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #222; margin: 0; }
-    .page { page-break-after: always; margin-bottom: 20px; }
-    .page:last-child { page-break-after: auto; }
-    .sheet { width: 100%; box-sizing: border-box; border: 1px solid #bbb; border-radius: 6px; padding: 12px; margin-bottom: 12px; page-break-inside: avoid; }
-    .sheet:last-child { margin-bottom: 0; }
-    .sheet-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #0D0D0D; padding-bottom: 8px; margin-bottom: 10px; }
-    .sheet-header h1 { margin: 0; font-size: 18px; letter-spacing: 1px; }
-    .sheet-header p { margin: 0; color: #555; }
-    .meta { text-align: right; }
-    .meta p { margin: 2px 0; font-size: 11px; }
-    h3 { margin: 12px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #0D0D0D; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #bbb; padding: 5px; text-align: left; font-size: 11px; }
-    th { background: #f0f0f0; }
-    td.num, th.num { text-align: right; }
-    table.plain td { border: none; padding: 3px 4px; }
-    table.plain td.lbl { width: 90px; color: #555; }
-    .totals { text-align: right; margin: 8px 0; }
-    .totals p { margin: 2px 0; font-size: 11px; }
-    .totals .grand { font-weight: bold; font-size: 13px; border-top: 1px solid #999; padding-top: 4px; }
-    .footer { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; border-top: 1px solid #ccc; padding-top: 8px; font-size: 11px; color: #444; }
-    .footer .collect { font-weight: bold; color: #0D0D0D; border: 1px solid #0D0D0D; padding: 3px 8px; border-radius: 4px; }
+    #sheet-root { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #222; }
+    #sheet-root .page { page-break-after: always; margin-bottom: 20px; }
+    #sheet-root .page:last-child { page-break-after: auto; }
+    #sheet-root .sheet { width: 100%; box-sizing: border-box; border: 1px solid #bbb; border-radius: 6px; padding: 12px; margin-bottom: 12px; page-break-inside: avoid; }
+    #sheet-root .sheet:last-child { margin-bottom: 0; }
+    #sheet-root .sheet-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #0D0D0D; padding-bottom: 8px; margin-bottom: 10px; }
+    #sheet-root .sheet-header h1 { margin: 0; font-size: 18px; letter-spacing: 1px; }
+    #sheet-root .sheet-header p { margin: 0; color: #555; }
+    #sheet-root .meta { text-align: right; }
+    #sheet-root .meta p { margin: 2px 0; font-size: 11px; }
+    #sheet-root h3 { margin: 12px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #0D0D0D; }
+    #sheet-root table { width: 100%; border-collapse: collapse; }
+    #sheet-root th, #sheet-root td { border: 1px solid #bbb; padding: 5px; text-align: left; font-size: 11px; }
+    #sheet-root th { background: #f0f0f0; }
+    #sheet-root td.num, #sheet-root th.num { text-align: right; }
+    #sheet-root table.plain td { border: none; padding: 3px 4px; }
+    #sheet-root table.plain td.lbl { width: 90px; color: #555; }
+    #sheet-root .totals { text-align: right; margin: 8px 0; }
+    #sheet-root .totals p { margin: 2px 0; font-size: 11px; }
+    #sheet-root .totals .grand { font-weight: bold; font-size: 13px; border-top: 1px solid #999; padding-top: 4px; }
+    #sheet-root .footer { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; border-top: 1px solid #ccc; padding-top: 8px; font-size: 11px; color: #444; }
+    #sheet-root .footer .collect { font-weight: bold; color: #0D0D0D; border: 1px solid #0D0D0D; padding: 3px 8px; border-radius: 4px; }
   </style>
-</head>
-<body>
-  ${pages.join("")}
-</body>
-</html>`;
+  <div id="sheet-root">
+    ${pages.join("")}
+  </div>`;
 }
 
 export function OrdersClient({
@@ -349,31 +342,66 @@ export function OrdersClient({
         return;
       }
 
-      const html2pdf = (await import("html2pdf.js")).default;
+      const [{ default: html2canvas }, jspdfModule] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+      const jsPDF = jspdfModule.jsPDF;
 
       const container = document.createElement("div");
-      container.innerHTML = buildShippingSheetHtml(data);
       container.style.position = "absolute";
       container.style.left = "-10000px";
       container.style.top = "0";
-      container.style.width = "200mm";
+      container.style.width = "210mm";
+      container.innerHTML = buildShippingSheetHtml(data);
       document.body.appendChild(container);
 
-      await html2pdf()
-        .set({
-          margin: [5, 5, 5, 5],
-          filename: `shipping_sheet_${format(new Date(), "yyyyMMdd_HHmm")}.pdf`,
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: "#FFFFFF",
-          },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-          pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-        })
-        .from(container)
-        .save();
+      const canvas = await html2canvas(container, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
+
+      const MM = 25.4;
+      const DPI = 96;
+      const SCALE = 2;
+      const PAGE_W_MM = 210;
+      const PAGE_H_MM = 297;
+      const pageWpx = Math.round((PAGE_W_MM / MM) * DPI * SCALE);
+      const pageHpx = Math.round((PAGE_H_MM / MM) * DPI * SCALE);
+      const containerTop = container.getBoundingClientRect().top;
+
+      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+      const pageEls = container.querySelectorAll(".page");
+      let isFirst = true;
+
+      pageEls.forEach((pageEl) => {
+        const rect = pageEl.getBoundingClientRect();
+        const dy = Math.round((rect.top - containerTop) * SCALE);
+        const heightMm = Math.min((rect.height * MM) / DPI, PAGE_H_MM);
+        const heightPx = Math.max(Math.round((heightMm / MM) * DPI * SCALE), 1);
+
+        const slice = document.createElement("canvas");
+        slice.width = pageWpx;
+        slice.height = heightPx;
+        const ctx = slice.getContext("2d")!;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, slice.width, slice.height);
+        ctx.drawImage(canvas, 0, dy, pageWpx, heightPx, 0, 0, pageWpx, heightPx);
+
+        if (!isFirst) pdf.addPage();
+        isFirst = false;
+        pdf.addImage(
+          slice.toDataURL("image/jpeg", 0.95),
+          "JPEG",
+          0,
+          0,
+          PAGE_W_MM,
+          heightMm
+        );
+      });
+
+      pdf.save(`shipping_sheet_${format(new Date(), "yyyyMMdd_HHmm")}.pdf`);
 
       document.body.removeChild(container);
       toast.success(
