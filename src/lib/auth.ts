@@ -2,6 +2,7 @@ import bcryptjs from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createHmac, timingSafeEqual } from 'crypto';
+import { db } from '@/lib/db';
 
 const SESSION_COOKIE_NAME = 'noor-admin-session';
 const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -93,6 +94,17 @@ export async function requireAuth() {
   if (!session) {
     redirect('/admin/login');
   }
+
+  const admin = await db.adminUser.findUnique({
+    where: { id: session.adminId },
+    select: { id: true, active: true },
+  });
+
+  if (!admin || !admin.active) {
+    await destroySession();
+    redirect('/admin/login');
+  }
+
   return session;
 }
 
