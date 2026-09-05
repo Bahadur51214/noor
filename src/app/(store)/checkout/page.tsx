@@ -33,6 +33,35 @@ function FieldLabel({ children }: { children: ReactNode }) {
   )
 }
 
+function PaymentDetails({ text, fallback }: { text: string; fallback: string }) {
+  const lines = text.split('\n').map((line) => line.trim()).filter(Boolean)
+
+  if (lines.length === 0) {
+    return <p className="text-sm text-gray-700">{fallback}</p>
+  }
+
+  return (
+    <div className="divide-y divide-[#C9A96E]/20">
+      {lines.map((line, index) => {
+        const colonIndex = line.indexOf(':')
+        if (colonIndex > 0) {
+          return (
+            <div key={index} className="flex flex-wrap justify-between gap-x-4 gap-y-0.5 py-1.5 text-sm first:pt-0 last:pb-0">
+              <span className="text-gray-500">{line.slice(0, colonIndex).trim()}</span>
+              <span className="font-medium text-black text-right">{line.slice(colonIndex + 1).trim()}</span>
+            </div>
+          )
+        }
+        return (
+          <p key={index} className="py-1.5 text-sm text-gray-600 whitespace-pre-line first:pt-0 last:pb-0">
+            {line}
+          </p>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, getSubtotal, clearCart } = useCart()
@@ -282,17 +311,17 @@ export default function CheckoutPage() {
                     className="mt-8 pt-6 border-t"
                   >
                     <div className="bg-[#F7F4EF] p-4 rounded-md mb-4">
-                      <h3 className="font-medium mb-2">Account Details</h3>
+                      <h3 className="font-medium mb-3">Account Details</h3>
                       {paymentMethod === PaymentMethod.BANK_TRANSFER && (
-                        <p className="text-sm text-gray-700 whitespace-pre-line">{paymentAccounts.bankDetails || "Please contact support for bank transfer details."}</p>
+                        <PaymentDetails text={paymentAccounts.bankDetails} fallback="Please contact support for bank transfer details." />
                       )}
                       {paymentMethod === PaymentMethod.EASYPAISA && (
-                        <p className="text-sm text-gray-700 whitespace-pre-line">{paymentAccounts.easypaisa || "Please contact support for Easypaisa details."}</p>
+                        <PaymentDetails text={paymentAccounts.easypaisa} fallback="Please contact support for Easypaisa details." />
                       )}
                       {paymentMethod === PaymentMethod.JAZZCASH && (
-                        <p className="text-sm text-gray-700 whitespace-pre-line">{paymentAccounts.jazzcash || "Please contact support for JazzCash details."}</p>
+                        <PaymentDetails text={paymentAccounts.jazzcash} fallback="Please contact support for JazzCash details." />
                       )}
-                      <p className="text-xs mt-2 text-gray-500">Please transfer the total amount (Rs. {total.toLocaleString()}).</p>
+                      <p className="text-xs mt-3 text-gray-500">Please transfer the total amount (Rs. {total.toLocaleString()}).</p>
                     </div>
 
                     <div className="border border-[#C9A96E]/40 bg-[#C9A96E]/5 rounded-md p-4">
