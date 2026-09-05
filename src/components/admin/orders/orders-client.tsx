@@ -315,6 +315,14 @@ export function OrdersClient({
     }
   };
 
+  const handleDownloadToolbar = async () => {
+    if (selectedIds.length === 0) {
+      toast.error("Select at least one order to download the shipping sheet.");
+      return;
+    }
+    await downloadShipment({ orderIds: selectedIds, filters: undefined });
+  };
+
   const handleDownload = async (type: "selected" | "filtered") => {
     await downloadShipment({
       orderIds: type === "selected" ? selectedIds : undefined,
@@ -423,7 +431,7 @@ export function OrdersClient({
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            onClick={() => handleDownload("filtered")}
+            onClick={handleDownloadToolbar}
             disabled={exportLoading}
             className="flex items-center gap-2"
           >
