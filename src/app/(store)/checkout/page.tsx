@@ -281,7 +281,7 @@ export default function CheckoutPage() {
                               <RadioGroupItem value={PaymentMethod.BANK_TRANSFER} id={PaymentMethod.BANK_TRANSFER} />
                               <Label htmlFor={PaymentMethod.BANK_TRANSFER} className="flex-1 cursor-pointer font-medium">Bank Transfer</Label>
                             </div>
-                            <p className="text-xs text-gray-500 mt-2 ml-6">Free delivery on advance payment</p>
+                            <p className="text-xs text-gray-500 mt-2 ml-6">{advanceDeliveryFee === 0 ? 'Free delivery on advance payment' : `Rs. ${advanceDeliveryFee} delivery fee`}</p>
                           </div>
                           
                           <div className="border rounded-lg p-4 cursor-pointer hover:border-black transition-colors [&:has([data-state=checked])]:border-black [&:has([data-state=checked])]:bg-[#F7F4EF]/30">
@@ -289,7 +289,7 @@ export default function CheckoutPage() {
                               <RadioGroupItem value={PaymentMethod.EASYPAISA} id={PaymentMethod.EASYPAISA} />
                               <Label htmlFor={PaymentMethod.EASYPAISA} className="flex-1 cursor-pointer font-medium">Easypaisa</Label>
                             </div>
-                            <p className="text-xs text-gray-500 mt-2 ml-6">Free delivery on advance payment</p>
+                            <p className="text-xs text-gray-500 mt-2 ml-6">{advanceDeliveryFee === 0 ? 'Free delivery on advance payment' : `Rs. ${advanceDeliveryFee} delivery fee`}</p>
                           </div>
                           
                           <div className="border rounded-lg p-4 cursor-pointer hover:border-black transition-colors [&:has([data-state=checked])]:border-black [&:has([data-state=checked])]:bg-[#F7F4EF]/30">
@@ -297,7 +297,7 @@ export default function CheckoutPage() {
                               <RadioGroupItem value={PaymentMethod.JAZZCASH} id={PaymentMethod.JAZZCASH} />
                               <Label htmlFor={PaymentMethod.JAZZCASH} className="flex-1 cursor-pointer font-medium">JazzCash</Label>
                             </div>
-                            <p className="text-xs text-gray-500 mt-2 ml-6">Free delivery on advance payment</p>
+                            <p className="text-xs text-gray-500 mt-2 ml-6">{advanceDeliveryFee === 0 ? 'Free delivery on advance payment' : `Rs. ${advanceDeliveryFee} delivery fee`}</p>
                           </div>
                         </RadioGroup>
                       </FormControl>

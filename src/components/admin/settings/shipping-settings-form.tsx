@@ -14,11 +14,13 @@ export function ShippingSettingsForm({
 }) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    codDeliveryFee: String(settings.codDeliveryFee || "250"),
-    advanceDeliveryFee: String(settings.advanceDeliveryFee || "0"),
+    codDeliveryFee: String(settings.codDeliveryFee ?? settings.cod_delivery_fee ?? "250"),
+    advanceDeliveryFee: String(settings.advanceDeliveryFee ?? settings.advance_delivery_fee ?? "0"),
     freeShippingMinOrder: settings.freeShippingMinOrder
       ? String(settings.freeShippingMinOrder)
-      : "",
+      : settings.free_shipping_min_order
+        ? String(settings.free_shipping_min_order)
+        : "",
     nationwideDelivery: settings.nationwideDelivery !== false,
   });
 
