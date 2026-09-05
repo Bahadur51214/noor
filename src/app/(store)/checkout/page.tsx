@@ -268,37 +268,49 @@ export default function CheckoutPage() {
                           defaultValue={field.value}
                           className="grid gap-4 md:grid-cols-2"
                         >
-                          <div className="border rounded-lg p-4 cursor-pointer hover:border-black transition-colors [&:has([data-state=checked])]:border-black [&:has([data-state=checked])]:bg-[#F7F4EF]/30">
+                          <Label
+                            htmlFor={PaymentMethod.COD}
+                            className="block border rounded-lg p-4 cursor-pointer hover:border-black transition-colors [&:has([data-state=checked])]:border-black [&:has([data-state=checked])]:bg-[#F7F4EF]/30"
+                          >
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value={PaymentMethod.COD} id={PaymentMethod.COD} />
-                              <Label htmlFor={PaymentMethod.COD} className="flex-1 cursor-pointer font-medium">Cash on Delivery</Label>
+                              <span className="flex-1 font-medium">Cash on Delivery</span>
                             </div>
                             <p className="text-xs text-gray-500 mt-2 ml-6">Pay when you receive the order (Rs. {codDeliveryFee} fee)</p>
-                          </div>
+                          </Label>
                           
-                          <div className="border rounded-lg p-4 cursor-pointer hover:border-black transition-colors [&:has([data-state=checked])]:border-black [&:has([data-state=checked])]:bg-[#F7F4EF]/30">
+                          <Label
+                            htmlFor={PaymentMethod.BANK_TRANSFER}
+                            className="block border rounded-lg p-4 cursor-pointer hover:border-black transition-colors [&:has([data-state=checked])]:border-black [&:has([data-state=checked])]:bg-[#F7F4EF]/30"
+                          >
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value={PaymentMethod.BANK_TRANSFER} id={PaymentMethod.BANK_TRANSFER} />
-                              <Label htmlFor={PaymentMethod.BANK_TRANSFER} className="flex-1 cursor-pointer font-medium">Bank Transfer</Label>
+                              <span className="flex-1 font-medium">Bank Transfer</span>
                             </div>
                             <p className="text-xs text-gray-500 mt-2 ml-6">{advanceDeliveryFee === 0 ? 'Free delivery on advance payment' : `Rs. ${advanceDeliveryFee} delivery fee`}</p>
-                          </div>
+                          </Label>
                           
-                          <div className="border rounded-lg p-4 cursor-pointer hover:border-black transition-colors [&:has([data-state=checked])]:border-black [&:has([data-state=checked])]:bg-[#F7F4EF]/30">
+                          <Label
+                            htmlFor={PaymentMethod.EASYPAISA}
+                            className="block border rounded-lg p-4 cursor-pointer hover:border-black transition-colors [&:has([data-state=checked])]:border-black [&:has([data-state=checked])]:bg-[#F7F4EF]/30"
+                          >
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value={PaymentMethod.EASYPAISA} id={PaymentMethod.EASYPAISA} />
-                              <Label htmlFor={PaymentMethod.EASYPAISA} className="flex-1 cursor-pointer font-medium">Easypaisa</Label>
+                              <span className="flex-1 font-medium">Easypaisa</span>
                             </div>
                             <p className="text-xs text-gray-500 mt-2 ml-6">{advanceDeliveryFee === 0 ? 'Free delivery on advance payment' : `Rs. ${advanceDeliveryFee} delivery fee`}</p>
-                          </div>
+                          </Label>
                           
-                          <div className="border rounded-lg p-4 cursor-pointer hover:border-black transition-colors [&:has([data-state=checked])]:border-black [&:has([data-state=checked])]:bg-[#F7F4EF]/30">
+                          <Label
+                            htmlFor={PaymentMethod.JAZZCASH}
+                            className="block border rounded-lg p-4 cursor-pointer hover:border-black transition-colors [&:has([data-state=checked])]:border-black [&:has([data-state=checked])]:bg-[#F7F4EF]/30"
+                          >
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value={PaymentMethod.JAZZCASH} id={PaymentMethod.JAZZCASH} />
-                              <Label htmlFor={PaymentMethod.JAZZCASH} className="flex-1 cursor-pointer font-medium">JazzCash</Label>
+                              <span className="flex-1 font-medium">JazzCash</span>
                             </div>
                             <p className="text-xs text-gray-500 mt-2 ml-6">{advanceDeliveryFee === 0 ? 'Free delivery on advance payment' : `Rs. ${advanceDeliveryFee} delivery fee`}</p>
-                          </div>
+                          </Label>
                         </RadioGroup>
                       </FormControl>
                       <FormMessage />
