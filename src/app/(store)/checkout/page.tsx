@@ -140,7 +140,7 @@ export default function CheckoutPage() {
       <h1 className="font-serif text-3xl mb-8 text-black">Checkout</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        <div className="lg:col-span-7 xl:col-span-8 order-2 lg:order-1">
+        <div className="lg:col-span-7 xl:col-span-8 order-1 lg:order-1">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               {/* Shipping Details */}
@@ -367,7 +367,7 @@ export default function CheckoutPage() {
         </div>
 
         {/* Order Summary Sidebar */}
-        <div className="lg:col-span-5 xl:col-span-4 order-1 lg:order-2">
+        <div className="lg:col-span-5 xl:col-span-4 order-2 lg:order-2">
           <div className="bg-[#F7F4EF]/50 rounded-lg p-6 lg:sticky lg:top-8 border border-[#C9A96E]/20">
             <h2 className="font-serif text-xl mb-6 pb-4 border-b border-gray-200">Order Summary</h2>
             
