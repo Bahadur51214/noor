@@ -51,6 +51,7 @@ const PRODUCT_SPEC_FIELDS = [
   "Gender",
   "Quality",
   "Style",
+  "Luminous Feature",
 ];
 
 interface ProductFormProps {

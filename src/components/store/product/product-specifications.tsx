@@ -10,6 +10,7 @@ const ORDERED_SPEC_FIELDS = [
   "Gender",
   "Quality",
   "Style",
+  "Luminous Feature",
 ];
 
 export function ProductSpecifications({
