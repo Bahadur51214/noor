@@ -1,11 +1,42 @@
-<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" rx="12" fill="#0D0D0D"/>
-  <circle cx="32" cy="32" r="26" fill="none" stroke="#C9A96E" stroke-width="2"/>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circular background -->
+  <circle cx="64" cy="64" r="60" fill="#FAF6ED" stroke="#D4AF37" stroke-width="3"/>
+  <!-- Inner ring -->
+  <circle cx="64" cy="64" r="54" fill="none" stroke="#C5A059" stroke-width="1.2"/>
+
+  <!-- Watch winding crown on the right edge -->
+  <rect x="120" y="58" width="5" height="12" rx="1.5" fill="#C5A059"/>
+
   <!-- Crown -->
-  <path d="M22 21 L25 14 L32 19 L39 14 L42 21 Z" fill="#C9A96E"/>
-  <!-- Letter N -->
-  <text x="32" y="47" font-family="serif" font-size="30" font-weight="bold" fill="#C9A96E" text-anchor="middle">N</text>
-  <!-- Watch hands -->
-  <line x1="32" y1="37" x2="32" y2="30" stroke="#F7F4EF" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="32" y1="37" x2="37" y2="39" stroke="#F7F4EF" stroke-width="1.5" stroke-linecap="round"/>
+  <g fill="#C5A059">
+    <circle cx="43" cy="40" r="2.5"/>
+    <circle cx="64" cy="27" r="3"/>
+    <circle cx="85" cy="40" r="2.5"/>
+    <path d="M 43 43 L 48 35 L 56 41 L 64 30 L 72 41 L 80 35 L 85 43 Z"/>
+    <rect x="43" y="43" width="42" height="3" rx="1"/>
+  </g>
+
+  <!-- Letter N (Serif) -->
+  <path d="M 43 48 
+           L 49 48 
+           L 49 76 
+           L 53 76 
+           L 73 52 
+           L 73 80 
+           L 68 80 
+           L 68 84 
+           L 81 84 
+           L 81 80 
+           L 77 80 
+           L 77 48 
+           L 72 48 
+           L 53 71 
+           L 53 48 Z" fill="#B8860B"/>
+
+  <!-- Watch Arc & Hands -->
+  <path d="M 66 43 C 90 43 95 62 95 72 C 95 82 90 101 66 101" fill="none" stroke="#C5A059" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Watch Hands -->
+  <line x1="78" y1="72" x2="71" y2="63" stroke="#B8860B" stroke-width="2" stroke-linecap="round"/>
+  <line x1="78" y1="72" x2="86" y2="76" stroke="#B8860B" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="78" cy="72" r="2.5" fill="#B8860B"/>
 </svg>
