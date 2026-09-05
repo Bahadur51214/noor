@@ -18,7 +18,7 @@ const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
   slug: z.string().min(2, "Slug is required"),
   sku: z.string().min(1, "SKU is required"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
+  description: z.string().optional(),
   shortDescription: z.string().optional(),
   price: z.coerce.number().positive("Price must be positive"),
   salePrice: z.coerce.number().positive().optional().or(z.literal("")),
@@ -234,7 +234,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
                 </div>
               </div>
               <div>
-                <Label>Description</Label>
+                <Label>Description (Optional)</Label>
                 <div className="mt-2">
                   <RichTextEditor
                     value={watch("description") || ""}
