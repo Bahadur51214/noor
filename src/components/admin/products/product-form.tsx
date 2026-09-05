@@ -119,7 +119,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
           data.salePrice === "" ? undefined : data.salePrice || undefined,
         costPrice:
           data.costPrice === "" ? undefined : data.costPrice || undefined,
-        images: data.images.map((url) => ({ url })),
+        images: data.images.map((url, index) => ({ url, sortOrder: index })),
       };
 
       const result = isEditing
