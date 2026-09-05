@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { updateOrderStatus } from "@/actions/order.actions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -28,6 +29,7 @@ export function OrderStatusUpdater({
   const [status, setStatus] = useState(currentStatus);
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   async function handleUpdate() {
     if (status === currentStatus) return;
@@ -39,6 +41,7 @@ export function OrderStatusUpdater({
       } else {
         toast.success("Order status updated");
         setNote("");
+        router.refresh();
       }
     } catch {
       toast.error("Failed to update status");
@@ -48,10 +51,8 @@ export function OrderStatusUpdater({
   }
 
   return (
-    <div className="rounded-lg border border-[#E0DCD5] bg-white p-6">
-      <h2 className="mb-4 font-serif text-lg font-semibold">Update Status</h2>
-      <div className="space-y-3">
-        <select
+    <div className="space-y-3">
+      <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
           className="w-full rounded-md border border-[#E0DCD5] bg-white px-3 py-2 text-sm focus:border-[#C9A96E] focus:outline-none focus:ring-1 focus:ring-[#C9A96E]"
@@ -76,7 +77,6 @@ export function OrderStatusUpdater({
         >
           {loading ? "Updating..." : "Update Status"}
         </Button>
-      </div>
     </div>
   );
 }

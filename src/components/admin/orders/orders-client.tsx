@@ -15,6 +15,36 @@ import {
 import { Download, Printer } from "lucide-react";
 import { toast } from "sonner";
 
+const COLUMN_LABELS: Record<string, string> = {
+  orderNumber: "Order Number",
+  orderDate: "Order Date",
+  customerName: "Customer Name",
+  phone: "Phone",
+  email: "Email",
+  city: "City",
+  area: "Area",
+  address: "Address",
+  landmark: "Landmark",
+  productName: "Product Name",
+  sku: "SKU",
+  quantity: "Quantity",
+  orderTotal: "Order Total",
+  deliveryCharges: "Delivery Charges",
+  discount: "Discount",
+  paymentMethod: "Payment Method",
+  paymentStatus: "Payment Status",
+  orderStatus: "Order Status",
+  courier: "Courier",
+  trackingNumber: "Tracking Number",
+};
+
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  JAZZCASH: "JazzCash",
+  EASIPAISA: "EasyPaisa",
+  BANK_TRANSFER: "Bank Transfer",
+  COD: "Cash on Delivery",
+};
+
 function escapeHtml(str: unknown): string {
   return String(str ?? "")
     .replace(/&/g, "&amp;")
@@ -24,12 +54,157 @@ function escapeHtml(str: unknown): string {
     .replace(/'/g, "&#039;");
 }
 
-export function OrdersClient({ initialOrders, filters }: { initialOrders: any[]; filters: any }) {
+function buildShippingSheetHtml(orders: any[]): string {
+  const sheets = orders
+    .map((order) => {
+      const itemsHtml = order.orderItems
+        .map((item: any) => {
+          return `<tr>
+            <td>${escapeHtml(item.productName || "")}</td>
+            <td>${escapeHtml(item.sku || "")}</td>
+            <td>${escapeHtml(item.quantity)}</td>
+            <td>${escapeHtml((item.price ?? "").toLocaleString())}</td>
+            <td>${escapeHtml((item.total ?? "").toLocaleString())}</td>
+          </tr>`;
+        })
+        .join("");
+
+      const address = [order.address, order.area, order.city, order.landmark]
+        .filter(Boolean)
+        .join(", ");
+
+      const courier = order.courier || "";
+      const tracking = order.trackingNumber || "";
+      const paymentMethod =
+        PAYMENT_METHOD_LABELS[order.paymentMethod] || order.paymentMethod || "";
+
+      return `
+      <div class="sheet">
+        <div class="sheet-header">
+          <div>
+            <h1>NOOR Watches</h1>
+            <p>Shipping Sheet</p>
+          </div>
+          <div class="meta">
+            <p><strong>Order:</strong> ${escapeHtml(order.orderNumber)}</p>
+            <p><strong>Date:</strong> ${format(
+              new Date(order.createdAt),
+              "MMMM d, yyyy"
+            )}</p>
+          </div>
+        </div>
+
+        <h3>Deliver To</h3>
+        <table class="plain">
+          <tr>
+            <td class="lbl">Customer</td>
+            <td>${escapeHtml(order.customerName || "")}</td>
+          </tr>
+          <tr>
+            <td class="lbl">Phone</td>
+            <td>${escapeHtml(order.customerPhone || "")}</td>
+          </tr>
+          <tr>
+            <td class="lbl">Email</td>
+            <td>${escapeHtml(order.customerEmail || "")}</td>
+          </tr>
+          <tr>
+            <td class="lbl">Address</td>
+            <td>${escapeHtml(address)}</td>
+          </tr>
+        </table>
+
+        <h3>Items</h3>
+        <table class="items">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>SKU</th>
+              <th class="num">Qty</th>
+              <th class="num">Price</th>
+              <th class="num">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsHtml}
+          </tbody>
+        </table>
+
+        <div class="totals">
+          <p>Subtotal: Rs. ${Number(order.subtotal).toLocaleString()}</p>
+          <p>Delivery Charges: Rs. ${Number(order.deliveryFee).toLocaleString()}</p>
+          ${
+            Number(order.discountAmount) > 0
+              ? `<p>Discount: - Rs. ${Number(order.discountAmount).toLocaleString()}</p>`
+              : ""
+          }
+          <p class="grand">Order Total: Rs. ${Number(order.total).toLocaleString()}</p>
+        </div>
+
+        <div class="footer">
+          <span>Payment: ${escapeHtml(paymentMethod)} (${escapeHtml(
+        order.paymentStatus || ""
+      )})</span>
+          <span>Order Status: ${escapeHtml(order.status || "")}</span>
+          ${
+            courier
+              ? `<span>Courier: ${escapeHtml(courier)}${
+                  tracking ? ` · ${escapeHtml(tracking)}` : ""
+                }</span>`
+              : ""
+          }
+        </div>
+      </div>`;
+    })
+    .join("");
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <title>Shipping Sheet</title>
+  <style>
+    @page { margin: 12mm; }
+    body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #222; margin: 0; }
+    .sheet { page-break-after: always; margin-bottom: 24px; }
+    .sheet:last-child { page-break-after: auto; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #0D0D0D; padding-bottom: 8px; margin-bottom: 10px; }
+    .sheet-header h1 { margin: 0; font-size: 20px; letter-spacing: 1px; }
+    .sheet-header p { margin: 0; color: #555; }
+    .meta { text-align: right; }
+    .meta p { margin: 2px 0; }
+    h3 { margin: 14px 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #0D0D0D; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #bbb; padding: 6px; text-align: left; }
+    th { background: #f0f0f0; }
+    td.num, th.num { text-align: right; }
+    table.plain td { border: none; padding: 3px 6px; }
+    table.plain td.lbl { width: 110px; color: #555; }
+    .totals { text-align: right; margin: 10px 0; }
+    .totals p { margin: 2px 0; }
+    .totals .grand { font-weight: bold; font-size: 14px; border-top: 1px solid #999; padding-top: 4px; }
+    .footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid #ccc; padding-top: 8px; font-size: 11px; color: #444; }
+  </style>
+</head>
+<body>
+  ${sheets}
+  <script>
+    window.onload = function() { window.print(); };
+  </script>
+</body>
+</html>`;
+}
+
+export function OrdersClient({
+  initialOrders,
+  filters,
+}: {
+  initialOrders: any[];
+  filters: any;
+}) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [exportLoading, setExportLoading] = useState(false);
   const [exportModalOpen, setExportModalOpen] = useState(false);
 
-  // Column preferences
   const [columns, setColumns] = useState({
     orderNumber: true,
     orderDate: true,
@@ -67,6 +242,14 @@ export function OrdersClient({ initialOrders, filters }: { initialOrders: any[];
     );
   };
 
+  const selectAllColumns = (value: boolean) => {
+    const next: Record<string, boolean> = {};
+    Object.keys(columns).forEach((key) => {
+      next[key] = value;
+    });
+    setColumns(next as typeof columns);
+  };
+
   const handleExport = async (type: "selected" | "filtered") => {
     try {
       setExportLoading(true);
@@ -80,20 +263,19 @@ export function OrdersClient({ initialOrders, filters }: { initialOrders: any[];
         return;
       }
 
-      // Build CSV
       const headers = Object.entries(columns)
         .filter(([_, isSelected]) => isSelected)
-        .map(([key]) => key);
+        .map(([key]) => COLUMN_LABELS[key]);
 
       const rows: string[][] = [];
 
       data.forEach((order) => {
-        // Flat map per item line
         order.orderItems.forEach((item: any) => {
           const row: string[] = [];
-          
+
           if (columns.orderNumber) row.push(order.orderNumber);
-          if (columns.orderDate) row.push(format(new Date(order.createdAt), "yyyy-MM-dd HH:mm"));
+          if (columns.orderDate)
+            row.push(format(new Date(order.createdAt), "yyyy-MM-dd HH:mm"));
           if (columns.customerName) row.push(order.customerName || "");
           if (columns.phone) row.push(order.customerPhone || "");
           if (columns.email) row.push(order.customerEmail || "");
@@ -113,11 +295,11 @@ export function OrdersClient({ initialOrders, filters }: { initialOrders: any[];
           if (columns.courier) row.push(order.courier || "");
           if (columns.trackingNumber) row.push(order.trackingNumber || "");
 
-          rows.push(row.map(val => `"${String(val).replace(/"/g, '""')}"`));
+          rows.push(row.map((val) => `"${String(val).replace(/"/g, '""')}"`));
         });
       });
 
-      const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+      const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -136,6 +318,14 @@ export function OrdersClient({ initialOrders, filters }: { initialOrders: any[];
   };
 
   const handlePrint = async (type: "selected" | "filtered") => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      toast.error(
+        "Pop-up blocked. Please allow pop-ups for this site and try again."
+      );
+      return;
+    }
+
     try {
       setExportLoading(true);
       const data = await exportOrdersAction({
@@ -144,80 +334,17 @@ export function OrdersClient({ initialOrders, filters }: { initialOrders: any[];
       });
 
       if (!data || data.length === 0) {
+        printWindow.close();
         toast.error("No orders found to print.");
         return;
       }
 
-      // Generate HTML for print
-      let printContents = `
-        <html>
-        <head>
-          <title>Shipping Sheet</title>
-          <style>
-            body { font-family: sans-serif; font-size: 12px; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
-            th { background-color: #f5f5f5; }
-            .header { margin-bottom: 20px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h2>Shipping Sheet</h2>
-            <p>Generated: ${format(new Date(), "yyyy-MM-dd HH:mm")}</p>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Order #</th>
-                <th>Customer</th>
-                <th>Phone</th>
-                <th>Address</th>
-                <th>City</th>
-                <th>Products</th>
-                <th>COD Amount</th>
-                <th>Payment Status</th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
-
-      data.forEach((order) => {
-        const productsStr = order.orderItems
-          .map((i: any) => `${i.quantity}x ${escapeHtml(i.productName)}`)
-          .join(", ");
-        const codAmount = order.paymentMethod === "COD" ? order.total : "PAID";
-        printContents += `
-          <tr>
-            <td>${escapeHtml(order.orderNumber)}</td>
-            <td>${escapeHtml(order.customerName)}</td>
-            <td>${escapeHtml(order.customerPhone)}</td>
-            <td>${escapeHtml(order.address)}, ${escapeHtml(order.area)}</td>
-            <td>${escapeHtml(order.city)}</td>
-            <td>${productsStr}</td>
-            <td>${escapeHtml(codAmount)}</td>
-            <td>${escapeHtml(order.paymentStatus)}</td>
-          </tr>
-        `;
-      });
-
-      printContents += `
-            </tbody>
-          </table>
-          <script>
-            window.onload = function() { window.print(); window.close(); }
-          </script>
-        </body>
-        </html>
-      `;
-
-      const printWindow = window.open("", "_blank");
-      if (printWindow) {
-        printWindow.document.open();
-        printWindow.document.write(printContents);
-        printWindow.document.close();
-      }
+      printWindow.document.open();
+      printWindow.document.write(buildShippingSheetHtml(data));
+      printWindow.document.close();
+      printWindow.focus();
     } catch (e) {
+      printWindow.close();
       toast.error("Print failed.");
     } finally {
       setExportLoading(false);
@@ -228,11 +355,20 @@ export function OrdersClient({ initialOrders, filters }: { initialOrders: any[];
     <div className="bg-white rounded-md border border-[#E0DCD5] overflow-hidden">
       <div className="p-4 flex flex-wrap items-center justify-between gap-4 border-b border-[#E0DCD5]">
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => handlePrint("filtered")}
+            disabled={exportLoading}
+            className="flex items-center gap-2"
+          >
+            <Printer className="w-4 h-4" />
+            {exportLoading ? "Preparing..." : "Print Shipping Sheet"}
+          </Button>
           <Dialog open={exportModalOpen} onOpenChange={setExportModalOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
                 <Download className="w-4 h-4" />
-                Export Shipping Sheet
+                Export CSV
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -240,31 +376,63 @@ export function OrdersClient({ initialOrders, filters }: { initialOrders: any[];
                 <DialogTitle>Configure Export</DialogTitle>
               </DialogHeader>
               <div className="py-4">
-                <p className="text-sm text-gray-500 mb-4">Select the columns to include in the CSV export:</p>
+                <p className="text-sm text-gray-500 mb-2">
+                  Select the columns to include in the CSV export:
+                </p>
+                <div className="flex items-center gap-4 mb-3 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => selectAllColumns(true)}
+                    className="text-[#C9A96E] hover:underline"
+                  >
+                    Select All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => selectAllColumns(false)}
+                    className="text-gray-500 hover:underline"
+                  >
+                    None
+                  </button>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
                   {Object.keys(columns).map((col) => (
                     <label key={col} className="flex items-center gap-2 text-sm">
                       <input
                         type="checkbox"
                         checked={columns[col as keyof typeof columns]}
-                        onChange={(e) => setColumns({ ...columns, [col]: e.target.checked })}
+                        onChange={(e) =>
+                          setColumns({ ...columns, [col]: e.target.checked })
+                        }
                         className="rounded border-gray-300"
                       />
-                      {col.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
+                      {COLUMN_LABELS[col]}
                     </label>
                   ))}
                 </div>
-                
+
                 <div className="flex flex-wrap gap-3">
-                  <Button onClick={() => handleExport("selected")} disabled={selectedIds.length === 0 || exportLoading}>
+                  <Button
+                    onClick={() => handleExport("selected")}
+                    disabled={selectedIds.length === 0 || exportLoading}
+                  >
                     Export Selected ({selectedIds.length})
                   </Button>
-                  <Button variant="outline" onClick={() => handleExport("filtered")} disabled={exportLoading}>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleExport("filtered")}
+                    disabled={exportLoading}
+                  >
                     Export All Filtered
                   </Button>
-                  <Button variant="secondary" onClick={() => handlePrint("filtered")} disabled={exportLoading} className="ml-auto flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    onClick={() => handlePrint("selected")}
+                    disabled={selectedIds.length === 0 || exportLoading}
+                    className="ml-auto flex items-center gap-2"
+                  >
                     <Printer className="w-4 h-4" />
-                    Print PDF Sheet
+                    Print Selected ({selectedIds.length})
                   </Button>
                 </div>
               </div>

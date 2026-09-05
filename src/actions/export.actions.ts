@@ -49,13 +49,12 @@ export async function exportOrdersAction({
     where,
     orderBy: { createdAt: "desc" },
     include: {
-      orderItems: true,
+      orderItems: { include: { product: true } },
       payments: true,
     },
   });
 
   return orders.map((order) => {
-    // Standardize to plain objects since we pass them back to the client
     return {
       ...order,
       subtotal: Number(order.subtotal),
@@ -64,8 +63,9 @@ export async function exportOrdersAction({
       total: Number(order.total),
       createdAt: order.createdAt.toISOString(),
       updatedAt: order.updatedAt.toISOString(),
-      orderItems: order.orderItems.map(item => ({
+      orderItems: order.orderItems.map((item) => ({
         ...item,
+        sku: item.product?.sku ?? null,
         price: Number(item.price),
         total: Number(item.total),
       })),

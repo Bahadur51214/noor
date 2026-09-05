@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { verifyPayment, rejectPayment } from "@/actions/order.actions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, ShieldAlert, XCircle } from "lucide-react";
 
 interface PaymentData {
   id: string;
@@ -22,18 +23,21 @@ export function PaymentVerification({
   payment: PaymentData;
   orderId: string;
 }) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showReject, setShowReject] = useState(false);
 
   async function handleVerify() {
+    if (loading) return;
     setLoading(true);
     try {
-      const result = await verifyPayment(payment.id);
+      const result = await verifyPayment(payment.id, orderId);
       if (result?.error) {
         toast.error(result.error);
       } else {
-        toast.success("Payment verified successfully");
+        toast.success("Payment verified — order confirmed");
+        router.refresh();
       }
     } catch {
       toast.error("Failed to verify payment");
@@ -43,17 +47,19 @@ export function PaymentVerification({
   }
 
   async function handleReject() {
+    if (loading) return;
     if (!rejectionReason.trim()) {
       toast.error("Please provide a reason for rejection");
       return;
     }
     setLoading(true);
     try {
-      const result = await rejectPayment(payment.id, rejectionReason);
+      const result = await rejectPayment(payment.id, orderId, rejectionReason);
       if (result?.error) {
         toast.error(result.error);
       } else {
         toast.success("Payment rejected");
+        router.refresh();
       }
     } catch {
       toast.error("Failed to reject payment");
@@ -63,44 +69,45 @@ export function PaymentVerification({
   }
 
   return (
-    <div className="rounded-lg border-2 border-amber-300 bg-amber-50 p-6">
-      <h2 className="mb-4 flex items-center gap-2 font-serif text-lg font-semibold text-amber-800">
-        ⚡ Payment Verification Required
-      </h2>
+    <div className="rounded-md border border-amber-200 bg-amber-50/70 p-4">
+      <h3 className="mb-1 flex items-center gap-2 text-sm font-semibold text-amber-800">
+        <ShieldAlert className="h-4 w-4" />
+        Payment Verification
+        <span className="ml-auto rounded-full bg-amber-200 px-2 py-0.5 text-[11px] font-medium text-amber-800">
+          Pending
+        </span>
+      </h3>
+      <p className="mb-3 text-xs text-[#6B655C]">
+        Make sure the payment is received (check WhatsApp) before verifying.
+      </p>
 
-      <div className="mb-4 space-y-2 text-sm">
-        <div className="flex justify-between">
-          <span className="text-[#6B655C]">Method</span>
-          <span className="font-medium">{payment.method}</span>
-        </div>
-        {payment.transactionId && (
-          <div className="flex justify-between">
-            <span className="text-[#6B655C]">Transaction ID</span>
-            <span className="font-mono font-medium">
-              {payment.transactionId}
-            </span>
+      {(payment.transactionId || payment.senderName || payment.screenshotUrl) &&
+        (
+          <div className="mb-4 space-y-2 text-xs">
+            {payment.transactionId && (
+              <div className="flex justify-between gap-2">
+                <span className="text-[#6B655C]">Transaction ID</span>
+                <span className="font-mono font-medium">{payment.transactionId}</span>
+              </div>
+            )}
+            {payment.senderName && (
+              <div className="flex justify-between gap-2">
+                <span className="text-[#6B655C]">Sender Name</span>
+                <span className="font-medium">{payment.senderName}</span>
+              </div>
+            )}
+            {payment.screenshotUrl && (
+              <img
+                src={payment.screenshotUrl}
+                alt="Payment screenshot"
+                className="max-h-56 rounded-md border"
+              />
+            )}
           </div>
         )}
-        {payment.senderName && (
-          <div className="flex justify-between">
-            <span className="text-[#6B655C]">Sender Name</span>
-            <span className="font-medium">{payment.senderName}</span>
-          </div>
-        )}
-        {payment.screenshotUrl && (
-          <div className="mt-3">
-            <p className="mb-2 text-[#6B655C]">Screenshot:</p>
-            <img
-              src={payment.screenshotUrl}
-              alt="Payment screenshot"
-              className="max-h-64 rounded-md border"
-            />
-          </div>
-        )}
-      </div>
 
       {!showReject ? (
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <Button
             onClick={handleVerify}
             disabled={loading}
@@ -128,7 +135,7 @@ export function PaymentVerification({
             className="w-full rounded-md border border-red-300 px-3 py-2 text-sm focus:border-red-500 focus:outline-none"
             rows={2}
           />
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <Button
               onClick={handleReject}
               disabled={loading}

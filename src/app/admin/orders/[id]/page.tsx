@@ -4,6 +4,29 @@ import { PaymentVerification } from "@/components/admin/orders/payment-verificat
 import { format } from 'date-fns';
 import { notFound } from 'next/navigation';
 
+const PAYMENT_STATUS_LABELS: Record<string, string> = {
+  PENDING: "Pending",
+  PENDING_VERIFICATION: "Pending Verification",
+  PAID: "Paid",
+  REJECTED: "Rejected",
+  FAILED: "Failed",
+  REFUNDED: "Refunded",
+};
+
+const PAYMENT_BADGE_CLASSES: Record<string, string> = {
+  PAID: "bg-emerald-100 text-emerald-700",
+  PENDING_VERIFICATION: "bg-amber-100 text-amber-700",
+  REJECTED: "bg-red-100 text-red-700",
+  FAILED: "bg-red-100 text-red-700",
+};
+
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  JAZZCASH: "JazzCash",
+  EASIPAISA: "EasyPaisa",
+  BANK_TRANSFER: "Bank Transfer",
+  COD: "Cash on Delivery",
+};
+
 export default async function AdminOrderDetailPage({
   params,
 }: {
@@ -63,13 +86,6 @@ export default async function AdminOrderDetailPage({
             </div>
           </div>
         </div>
-
-        {order.paymentMethod !== 'COD' && order.paymentStatus === 'PENDING_VERIFICATION' && payment && (
-          <PaymentVerification 
-            payment={payment} 
-            orderId={order.id} 
-          />
-        )}
       </div>
 
       <div className="space-y-6">
@@ -86,22 +102,36 @@ export default async function AdminOrderDetailPage({
 
         <div className="bg-white p-6 rounded-lg border border-[#E0DCD5] shadow-sm">
           <h2 className="text-lg font-serif mb-4 text-[#0D0D0D]">Manage Order</h2>
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
               <p className="text-sm font-medium mb-1 text-gray-500">Status</p>
               <OrderStatusUpdater orderId={order.id} currentStatus={order.status} />
             </div>
-            <div>
+
+            <div className="pt-4 border-t border-gray-100">
               <p className="text-sm font-medium mb-1 text-gray-500">Payment Status</p>
-              <p className="text-sm font-medium text-[#0D0D0D]">{order.paymentStatus}</p>
+              <span
+                className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                  PAYMENT_BADGE_CLASSES[order.paymentStatus] ?? "bg-gray-100 text-gray-700"
+                }`}
+              >
+                {PAYMENT_STATUS_LABELS[order.paymentStatus] ?? order.paymentStatus}
+              </span>
             </div>
+
             <div>
               <p className="text-sm font-medium mb-1 text-gray-500">Payment Method</p>
-              <p className="text-sm font-medium text-[#0D0D0D]">{order.paymentMethod}</p>
+              <p className="text-sm font-medium text-[#0D0D0D]">
+                {PAYMENT_METHOD_LABELS[order.paymentMethod] ?? order.paymentMethod}
+              </p>
             </div>
+
+            {order.paymentMethod !== 'COD' && order.paymentStatus === 'PENDING_VERIFICATION' && payment && (
+              <PaymentVerification payment={payment} orderId={order.id} />
+            )}
           </div>
         </div>
-        
+
         <div className="bg-white p-6 rounded-lg border border-[#E0DCD5] shadow-sm">
           <h2 className="text-lg font-serif mb-4 text-[#0D0D0D]">Order History</h2>
           <div className="space-y-4">

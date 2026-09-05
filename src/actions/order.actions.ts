@@ -42,7 +42,7 @@ export async function updateOrderStatus(
   }
 }
 
-export async function verifyPayment(paymentId: string) {
+export async function verifyPayment(paymentId: string, orderId: string) {
   const session = await requireAuth();
 
   try {
@@ -55,6 +55,7 @@ export async function verifyPayment(paymentId: string) {
       entityId: paymentId,
     });
 
+    revalidatePath(`/admin/orders/${orderId}`);
     revalidatePath("/admin/orders");
     revalidatePath("/admin/dashboard");
 
@@ -67,7 +68,11 @@ export async function verifyPayment(paymentId: string) {
   }
 }
 
-export async function rejectPayment(paymentId: string, reason: string) {
+export async function rejectPayment(
+  paymentId: string,
+  orderId: string,
+  reason: string
+) {
   const session = await requireAuth();
 
   try {
@@ -81,6 +86,7 @@ export async function rejectPayment(paymentId: string, reason: string) {
       metadata: { reason },
     });
 
+    revalidatePath(`/admin/orders/${orderId}`);
     revalidatePath("/admin/orders");
     revalidatePath("/admin/dashboard");
 
@@ -144,6 +150,7 @@ export async function cancelOrder(orderId: string, reason?: string) {
       metadata: { reason },
     });
 
+    revalidatePath(`/admin/orders/${orderId}`);
     revalidatePath("/admin/orders");
     revalidatePath("/admin/dashboard");
 
