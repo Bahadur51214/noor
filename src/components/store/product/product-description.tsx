@@ -113,36 +113,3 @@ export function DescriptionBlocks({ blocks }: { blocks: DescriptionBlock[] }) {
     </div>
   );
 }
-
-export function ProductDescription({
-  description,
-}: {
-  description: string | null | undefined;
-}) {
-  const parsed = parseDescription(description);
-
-  if (parsed.structured) {
-    return <DescriptionBlocks blocks={parsed.blocks} />;
-  }
-
-  const plain = parsed.plainText;
-  if (!plain || !plain.trim()) {
-    return null;
-  }
-  const paragraphs = plain
-    .split(/\n+/)
-    .map((p) => p.trim())
-    .filter(Boolean);
-
-  if (paragraphs.length === 0) return null;
-
-  return (
-    <div className="product-description space-y-4">
-      {paragraphs.map((p, i) => (
-        <p key={i} className="text-gray-600 leading-relaxed text-[15px]">
-          {p}
-        </p>
-      ))}
-    </div>
-  );
-}

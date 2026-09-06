@@ -104,6 +104,9 @@ export default function CheckoutPage() {
     if (items.length === 0 && mounted && !orderPlaced) {
       router.push('/cart')
     }
+  }, [items, router, mounted, orderPlaced])
+
+  useEffect(() => {
     getPublicStoreSettings().then((settings) => {
       setCodDeliveryFee(Number(settings.shipping.codDeliveryFee ?? 250))
       setAdvanceDeliveryFee(Number(settings.shipping.advanceDeliveryFee ?? 0))
@@ -116,7 +119,7 @@ export default function CheckoutPage() {
         jazzcash: accounts.jazzcash,
       })
     })
-  }, [items, router, mounted, orderPlaced])
+  }, [])
 
   if (!mounted) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>
   if (items.length === 0) return null
@@ -302,7 +305,7 @@ export default function CheckoutPage() {
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          value={field.value}
                           className="grid gap-4 md:grid-cols-2"
                         >
                           <Label

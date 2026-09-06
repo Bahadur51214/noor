@@ -61,6 +61,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.noorwatches.com'
 
   const isSale = !!product.salePrice
+  const price = Number(product.price)
+  const salePrice = product.salePrice != null ? Number(product.salePrice) : null
+  const displayPrice = isSale && salePrice != null ? salePrice : price
+  const averageRating = Number(ratingInfo.average)
   const structuredDescription =
     product.shortDescription || product.seoDescription || product.name
 
@@ -75,7 +79,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     ...(ratingInfo.count > 0 && {
       aggregateRating: {
         '@type': 'AggregateRating',
-        ratingValue: Math.round(ratingInfo.average * 10) / 10,
+        ratingValue: Math.round(averageRating * 10) / 10,
         reviewCount: ratingInfo.count,
       },
     }),
@@ -83,7 +87,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       '@type': 'Offer',
       url: `${baseUrl}/product/${product.slug}`,
       priceCurrency: 'PKR',
-      price: isSale && product.salePrice ? product.salePrice : product.price,
+      price: displayPrice,
       availability: 'https://schema.org/InStock',
     },
   }
@@ -111,16 +115,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <h1 className="text-3xl md:text-4xl font-serif text-[#0D0D0D] mb-4">{product.name}</h1>
 
           {ratingInfo.count > 0 && (
-            <a href="#reviews" className="inline-flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity" aria-label={`${ratingInfo.average.toFixed(1)} out of 5 stars, ${ratingInfo.count} reviews`}>
+            <a href="#reviews" className="inline-flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity" aria-label={`${averageRating.toFixed(1)} out of 5 stars, ${ratingInfo.count} reviews`}>
               <span className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <Star
                     key={i}
-                    className={`w-4 h-4 ${i <= Math.round(ratingInfo.average) ? "fill-[#C9A96E] text-[#C9A96E]" : "fill-gray-200 text-gray-200"}`}
+                    className={`w-4 h-4 ${i <= Math.round(averageRating) ? "fill-[#C9A96E] text-[#C9A96E]" : "fill-gray-200 text-gray-200"}`}
                   />
                 ))}
               </span>
-              <span className="text-sm font-medium text-[#0D0D0D]">{ratingInfo.average.toFixed(1)}</span>
+              <span className="text-sm font-medium text-[#0D0D0D]">{averageRating.toFixed(1)}</span>
               <span className="text-sm text-gray-500">
                 ({ratingInfo.count} review{ratingInfo.count === 1 ? "" : "s"})
               </span>
@@ -130,12 +134,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="flex items-center gap-4 mb-6">
             {isSale ? (
               <>
-                <span className="text-2xl text-[#C9A96E] font-medium">Rs. {product.salePrice?.toLocaleString()}</span>
-                <span className="text-xl text-gray-400 line-through">Rs. {product.price.toLocaleString()}</span>
+                <span className="text-2xl text-[#C9A96E] font-medium">Rs. {Number(salePrice ?? 0).toLocaleString()}</span>
+                <span className="text-xl text-gray-400 line-through">Rs. {price.toLocaleString()}</span>
                 <Badge className="bg-[#C9A96E] text-white rounded-none uppercase tracking-wider">Sale</Badge>
               </>
             ) : (
-              <span className="text-2xl text-[#0D0D0D] font-medium">Rs. {product.price.toLocaleString()}</span>
+              <span className="text-2xl text-[#0D0D0D] font-medium">Rs. {price.toLocaleString()}</span>
             )}
           </div>
 
@@ -146,7 +150,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
 
           <div className="mb-8">
-            <AddToCartButton product={product as any} />
+            <AddToCartButton
+              product={{
+                id: product.id,
+                name: product.name,
+                slug: product.slug,
+                price,
+                salePrice,
+                images: product.images.map((i) => ({ url: i.url })),
+                stock: product.stock,
+              }}
+            />
           </div>
 
           {product.shortDescription && (
@@ -190,7 +204,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <ProductReviews
         productId={product.id}
         reviews={reviews as any}
-        average={ratingInfo.average}
+        average={averageRating}
         reviewCount={ratingInfo.count}
       />
       </div>

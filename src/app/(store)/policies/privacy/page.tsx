@@ -4,6 +4,7 @@ export const metadata = {
   title: "Privacy Policy | NOOR Watches",
   description:
     "See how NOOR Watches collects, uses, and protects your personal information when you browse and shop online.",
+  alternates: { canonical: "/policies/privacy" },
 };
 
 export default async function PrivacyPolicyPage() {

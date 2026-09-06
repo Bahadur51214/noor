@@ -14,7 +14,8 @@ export default async function OrderSuccessPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const resolvedParams = await searchParams
-  const orderNumber = resolvedParams.orderNumber as string | undefined
+  const orderNumber =
+    typeof resolvedParams.orderNumber === 'string' ? resolvedParams.orderNumber : undefined
 
   return (
     <div className="container mx-auto px-4 py-24 min-h-[70vh] flex items-center justify-center">

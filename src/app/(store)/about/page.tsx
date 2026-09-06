@@ -3,6 +3,13 @@ import Image from "next/image";
 export const metadata = {
   title: "About NOOR | Premium Women's Watches in Pakistan",
   description: "Discover the story behind NOOR — Pakistan's destination for elegant, premium women's watches.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About NOOR | Premium Women's Watches in Pakistan",
+    description: "Discover the story behind NOOR — Pakistan's destination for elegant, premium women's watches.",
+    url: "/about",
+    type: "website",
+  },
 };
 
 export default function AboutPage() {

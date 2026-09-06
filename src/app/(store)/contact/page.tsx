@@ -112,8 +112,9 @@ export default function ContactPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label>Full Name *</Label>
+                    <Label htmlFor="contact-name">Full Name *</Label>
                     <Input
+                      id="contact-name"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       placeholder="Your name"
@@ -121,8 +122,9 @@ export default function ContactPage() {
                     />
                   </div>
                   <div>
-                    <Label>Phone Number</Label>
+                    <Label htmlFor="contact-phone">Phone Number</Label>
                     <Input
+                      id="contact-phone"
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       placeholder="03XX XXXXXXX"
@@ -131,8 +133,9 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <Label>Email</Label>
+                  <Label htmlFor="contact-email">Email</Label>
                   <Input
+                    id="contact-email"
                     type="email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -141,8 +144,9 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <Label>Message *</Label>
+                  <Label htmlFor="contact-message">Message *</Label>
                   <textarea
+                    id="contact-message"
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     className="w-full rounded-md border border-[#E0DCD5] px-3 py-2 text-sm focus:border-[#C9A96E] focus:outline-none focus:ring-1 focus:ring-[#C9A96E] min-h-[120px]"

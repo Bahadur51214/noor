@@ -76,10 +76,10 @@ export function isValidPakistaniPhone(phone: string) {
 
 export function toWhatsAppLink(phone: string, text?: string) {
   let digits = phone.replace(/\D/g, '');
-  if (digits.startsWith('0')) {
-    digits = '92' + digits.slice(1);
-  } else if (digits.startsWith('0092')) {
+  if (digits.startsWith('0092')) {
     digits = '92' + digits.slice(4);
+  } else if (digits.startsWith('0')) {
+    digits = '92' + digits.slice(1);
   }
   const base = `https://wa.me/${digits}`;
   return text ? `${base}?text=${encodeURIComponent(text)}` : base;

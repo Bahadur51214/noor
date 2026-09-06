@@ -33,6 +33,25 @@ export async function generateMetadata({ searchParams }: ShopPageProps): Promise
         ? `Browse ${prettyCategory.toLowerCase()} watches at NOOR. Elegant timepieces with delivery across Pakistan.`
         : 'Explore our collection of luxury women\'s watches.',
     alternates: { canonical: '/shop' },
+    openGraph: {
+      title: `${title} | NOOR`,
+      description: search
+        ? `Search results for "${search}" in NOOR's luxury women's watch collection.`
+        : prettyCategory
+          ? `Browse ${prettyCategory.toLowerCase()} watches at NOOR. Elegant timepieces with delivery across Pakistan.`
+          : 'Explore our collection of luxury women\'s watches.',
+      url: '/shop',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | NOOR`,
+      description: search
+        ? `Search results for "${search}" in NOOR's luxury women's watch collection.`
+        : prettyCategory
+          ? `Browse ${prettyCategory.toLowerCase()} watches at NOOR. Elegant timepieces with delivery across Pakistan.`
+          : 'Explore our collection of luxury women\'s watches.',
+    },
   }
 }
 

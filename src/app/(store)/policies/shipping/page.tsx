@@ -4,6 +4,7 @@ export const metadata = {
   title: "Shipping Policy | NOOR Watches",
   description:
     "Learn about NOOR's delivery coverage across Pakistan, delivery charges, processing times, and how to track your order.",
+  alternates: { canonical: "/policies/shipping" },
 };
 
 export default async function ShippingPolicyPage() {
