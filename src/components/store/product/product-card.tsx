@@ -66,21 +66,6 @@ export function ProductCard({ product }: ProductCardProps) {
           {isNew && <Badge className="bg-[#0D0D0D] text-white rounded-none uppercase tracking-wider text-[10px] px-2 py-1">New</Badge>}
           {isSale && <Badge className="bg-[#C9A96E] text-white rounded-none uppercase tracking-wider text-[10px] px-2 py-1">Sale</Badge>}
         </div>
-
-        {/* Quick Add */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 ease-out">
-          <Button 
-            onClick={handleAddToCart}
-            disabled={product.stock <= 0}
-            className="w-full bg-[#0D0D0D]/90 hover:bg-[#0D0D0D] text-white rounded-none uppercase tracking-widest text-xs h-12 backdrop-blur-sm"
-          >
-            {product.stock > 0 ? (
-              <span className="flex items-center gap-2">
-                <ShoppingBag className="w-4 h-4" /> Add to Cart
-              </span>
-            ) : "Out of Stock"}
-          </Button>
-        </div>
       </Link>
 
       <div className="flex flex-col gap-1">
@@ -111,6 +96,18 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
       </div>
+
+      <Button
+        onClick={handleAddToCart}
+        disabled={product.stock <= 0}
+        className="w-full bg-[#0D0D0D]/90 hover:bg-[#0D0D0D] text-white rounded-none uppercase tracking-widest text-xs h-12"
+      >
+        {product.stock > 0 ? (
+          <span className="flex items-center gap-2">
+            <ShoppingBag className="w-4 h-4" /> Add to Cart
+          </span>
+        ) : "Out of Stock"}
+      </Button>
     </motion.div>
   )
 }
