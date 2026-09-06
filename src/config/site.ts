@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "NOOR",
   description: "Premium women's watches in Pakistan. Discover our elegant and sophisticated collection.",
-  url: process.env.NEXT_PUBLIC_APP_URL || "https://noorwatches.com",
+  url: process.env.NEXT_PUBLIC_APP_URL || "https://www.noorwatches.com",
   domain: "noorwatches.com",
   navLinks: [
     { label: 'Shop', href: '/shop' },

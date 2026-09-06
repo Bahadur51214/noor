@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, User } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { MobileNav } from "./mobile-nav";
 import { SearchDialog } from "./search-dialog";
 import { useCart } from "@/hooks/use-cart";
@@ -47,10 +47,6 @@ export function Navbar() {
         {/* Icons */}
         <div className="flex items-center gap-2 md:gap-4 flex-1 md:flex-none justify-end">
           <SearchDialog />
-          <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
-            <User className="h-5 w-5" />
-            <span className="sr-only">Account</span>
-          </Button>
           <Button variant="ghost" size="icon" onClick={openCart} className="relative">
             <ShoppingBag className="h-5 w-5" />
             <span className="sr-only">Cart</span>

@@ -2,6 +2,8 @@ import { settingsService } from "@/services/settings.service";
 
 export const metadata = {
   title: "Terms & Conditions | NOOR Watches",
+  description:
+    "Read the terms and conditions that apply when you use NOOR's website, place an order, and shop with us online.",
 };
 
 export default async function TermsPage() {

@@ -2,6 +2,8 @@ import { settingsService } from "@/services/settings.service";
 
 export const metadata = {
   title: "Shipping Policy | NOOR Watches",
+  description:
+    "Learn about NOOR's delivery coverage across Pakistan, delivery charges, processing times, and how to track your order.",
 };
 
 export default async function ShippingPolicyPage() {

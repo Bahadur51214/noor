@@ -2,6 +2,8 @@ import { settingsService } from "@/services/settings.service";
 
 export const metadata = {
   title: "Return & Refund Policy | NOOR Watches",
+  description:
+    "Read NOOR's 7-day return and refund policy — how to start a return for your watch order and what to expect.",
 };
 
 export default async function ReturnPolicyPage() {

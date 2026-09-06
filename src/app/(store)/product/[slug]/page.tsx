@@ -58,7 +58,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     reviewService.getAverageRating(product.id),
   ])
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://noorwatches.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.noorwatches.com'
 
   const isSale = !!product.salePrice
   const structuredDescription =
@@ -72,6 +72,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
     sku: product.sku || undefined,
     image: product.images[0]?.url || undefined,
     brand: { '@type': 'Brand', name: 'NOOR' },
+    ...(ratingInfo.count > 0 && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: Math.round(ratingInfo.average * 10) / 10,
+        reviewCount: ratingInfo.count,
+      },
+    }),
     offers: {
       '@type': 'Offer',
       url: `${baseUrl}/product/${product.slug}`,

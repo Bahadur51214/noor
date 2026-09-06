@@ -155,16 +155,6 @@ export const productService = {
     return attachReviewStats(products)
   },
 
-  async getRelated(productId: string, categoryId: string | null, limit: number = 4) {
-    if (!categoryId) return []
-    const products = await db.product.findMany({
-      where: { categoryId, id: { not: productId }, status: 'ACTIVE' },
-      take: limit,
-      include: { category: { select: { name: true } }, images: { orderBy: { sortOrder: 'asc' }, take: 1 } }
-    })
-    return attachReviewStats(products)
-  },
-
   async checkStock(productId: string, quantity: number) {
     const product = await db.product.findUnique({
       where: { id: productId },

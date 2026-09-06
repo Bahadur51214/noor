@@ -19,7 +19,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "https://noorwatches.com"
+    process.env.NEXT_PUBLIC_APP_URL || "https://www.noorwatches.com"
   ),
   title: {
     default: "NOOR — Premium Women's Watches",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://noorwatches.com",
+    url: "https://www.noorwatches.com",
     siteName: "NOOR Watches",
     title: "NOOR — Premium Women's Watches",
     description:
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     images: ["/images/og-image.png"],
   },
   verification: {
-    google: "", // TODO: paste your Google Search Console HTML-tag verification code
+    google: "google1071f26257956a21",
   },
   robots: {
     index: true,
@@ -95,17 +95,17 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "OnlineStore",
               name: "NOOR Watches",
-              url: process.env.NEXT_PUBLIC_APP_URL || "https://noorwatches.com",
+              url: process.env.NEXT_PUBLIC_APP_URL || "https://www.noorwatches.com",
               description:
                 "Discover NOOR's collection of elegant women's watches. Premium timepieces delivered across Pakistan with Cash on Delivery or Advance Payment.",
               image:
-                (process.env.NEXT_PUBLIC_APP_URL || "https://noorwatches.com") +
+                (process.env.NEXT_PUBLIC_APP_URL || "https://www.noorwatches.com") +
                 "/images/og-image.png",
               sameAs: [],
               potentialAction: {
                 "@type": "SearchAction",
                 target:
-                  (process.env.NEXT_PUBLIC_APP_URL || "https://noorwatches.com") +
+                  (process.env.NEXT_PUBLIC_APP_URL || "https://www.noorwatches.com") +
                   "/shop?search={search_term_string}",
                 "query-input": "required name=search_term_string",
               },
