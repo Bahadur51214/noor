@@ -43,8 +43,8 @@ export function ProductCard({ product }: ProductCardProps) {
         
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {isNew && <Badge className="bg-[#0D0D0D] text-white rounded-none uppercase tracking-wider text-[10px] px-2 py-1">New</Badge>}
-          {isSale && <Badge className="bg-[#C9A96E] text-white rounded-none uppercase tracking-wider text-[10px] px-2 py-1">Sale</Badge>}
+          {isNew && <Badge className="bg-[#0D0D0D] text-white rounded-none uppercase tracking-wider text-[9px] px-1.5 py-0.5 font-medium">New</Badge>}
+          {isSale && <Badge className="bg-[#C9A96E] text-white rounded-none uppercase tracking-wider text-[9px] px-1.5 py-0.5 font-medium">Sale</Badge>}
         </div>
       </Link>
 
