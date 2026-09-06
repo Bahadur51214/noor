@@ -61,6 +61,9 @@ export const metadata: Metadata = {
       "Elegant watches designed to complement every moment. Shop online across Pakistan.",
     images: ["/images/og-image.png"],
   },
+  verification: {
+    google: "", // TODO: paste your Google Search Console HTML-tag verification code
+  },
   robots: {
     index: true,
     follow: true,

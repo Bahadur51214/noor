@@ -79,7 +79,7 @@ export default function ContactPage() {
                 <div>
                   <p className="font-medium text-[#0D0D0D]">Email</p>
                   <p className="text-gray-500 text-sm">
-                    {settings?.email || "support@noorwatches.pk"}
+                    {settings?.email || "support@noorwatches.com"}
                   </p>
                 </div>
               </div>

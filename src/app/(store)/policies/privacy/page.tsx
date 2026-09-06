@@ -55,7 +55,7 @@ export default async function PrivacyPolicyPage() {
                 </ul>
 
                 <h2 className="text-lg font-serif text-[#0D0D0D]">Contact Us</h2>
-                <p>For any privacy-related concerns, please contact us at <strong>support@noorwatches.pk</strong> or via WhatsApp.</p>
+                <p>For any privacy-related concerns, please contact us at <strong>support@noorwatches.com</strong> or via WhatsApp.</p>
               </>
             )}
           </div>

@@ -32,7 +32,7 @@ async function main() {
     { key: "free_shipping_min_order", value: "5000", group: "shipping" },
     // store
     { key: "storeName", value: "NOOR", group: "store" },
-    { key: "email", value: "support@noorwatches.pk", group: "store" },
+    { key: "email", value: "support@noorwatches.com", group: "store" },
     { key: "phone", value: "+92 300 1234567", group: "store" },
     { key: "whatsapp", value: "+92 300 1234567", group: "store" },
     { key: "currency", value: "Rs", group: "store" },

@@ -24,7 +24,7 @@ export default async function TermsPage() {
             ) : (
               <>
                 <h2 className="text-lg font-serif text-[#0D0D0D]">General</h2>
-                <p>By accessing and placing an order on noorwatches.pk, you confirm that you are in agreement with and bound by the terms and conditions below. These terms apply to the entire website and any communication between you and NOOR.</p>
+                <p>By accessing and placing an order on noorwatches.com, you confirm that you are in agreement with and bound by the terms and conditions below. These terms apply to the entire website and any communication between you and NOOR.</p>
 
                 <h2 className="text-lg font-serif text-[#0D0D0D]">Products &amp; Pricing</h2>
                 <ul className="list-disc pl-6 space-y-2">
