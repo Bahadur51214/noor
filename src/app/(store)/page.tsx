@@ -30,9 +30,9 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const [featuredProducts, bestSellers, heroImageSetting] = await Promise.all([
-    productService.getFeatured(4),
-    productService.getBestSellers(4),
-    settingsService.get("heroImage"),
+    productService.getFeatured(4).catch(() => []),
+    productService.getBestSellers(4).catch(() => []),
+    settingsService.get("heroImage").catch(() => null),
   ])
 
   const heroImage = heroImageSetting || DEFAULT_HERO_IMAGE
