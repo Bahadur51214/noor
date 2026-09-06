@@ -14,9 +14,22 @@ async function attachReviewStats<T extends { id: string }>(products: T[]) {
     _count: { id: true },
   })
   const map = new Map(aggs.map((a) => [a.productId, a]))
+  const serializeDecimals = (obj: any) => {
+    const out: any = {}
+    for (const [key, val] of Object.entries(obj)) {
+      if (Prisma.Decimal.isDecimal(val)) out[key] = val.toNumber()
+      else if (Array.isArray(val)) out[key] = val
+      else out[key] = val
+    }
+    return out
+  }
   return (products as any[]).map((p) => {
     const agg = map.get(p.id)
-    return { ...p, reviewCount: agg?._count.id ?? 0, ratingAverage: agg?._avg.rating ?? 0 }
+    return {
+      ...serializeDecimals(p),
+      reviewCount: agg?._count.id ?? 0,
+      ratingAverage: agg?._avg.rating ?? 0,
+    }
   })
 }
 
