@@ -1,13 +1,8 @@
-"use client"
-
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "motion/react"
-import { ShoppingBag, Star } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Star } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { useCart } from "@/hooks/use-cart"
-import { toast } from "sonner"
 
 interface ProductCardProps {
   product: {
@@ -26,21 +21,6 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = useCart()
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault()
-    addItem({
-      productId: product.id,
-      name: product.name,
-      slug: product.slug,
-      image: product.images[0]?.url || "/placeholder.svg",
-      price: Number(product.price),
-      salePrice: product.salePrice != null ? Number(product.salePrice) : null,
-      stock: product.stock,
-    })
-    toast.success(`${product.name} added to cart`)
-  }
 
   const isNew = product.newArrival
   const isSale = !!product.salePrice
@@ -96,18 +76,6 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
       </div>
-
-      <Button
-        onClick={handleAddToCart}
-        disabled={product.stock <= 0}
-        className="w-full bg-[#0D0D0D]/90 hover:bg-[#0D0D0D] text-white rounded-none uppercase tracking-widest text-xs h-12"
-      >
-        {product.stock > 0 ? (
-          <span className="flex items-center gap-2">
-            <ShoppingBag className="w-4 h-4" /> Add to Cart
-          </span>
-        ) : "Out of Stock"}
-      </Button>
     </motion.div>
   )
 }
