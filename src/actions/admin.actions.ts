@@ -6,15 +6,19 @@ import {
   createSession,
   destroySession,
   requireAuth,
+  hashPassword,
 } from "@/lib/auth";
-import { loginSchema } from "@/schemas/auth.schema";
+import { loginSchema, updateAdminCredentialsSchema } from "@/schemas/auth.schema";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { auditService } from "@/services/audit.service";
 import { headers } from "next/headers";
 import { rateLimit } from "@/lib/rate-limit";
 
 const LOGIN_RATE_LIMIT = 5;
 const LOGIN_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+const CREDENTIALS_RATE_LIMIT = 5;
+const CREDENTIALS_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 
 export async function loginAdmin(
   _prevState: { error?: string } | undefined,
@@ -85,4 +89,79 @@ export async function logoutAdmin() {
 
   await destroySession();
   redirect("/admin/login");
+}
+
+export async function updateAdminCredentials(data: unknown) {
+  const session = await requireAuth();
+
+  const parsed = updateAdminCredentialsSchema.safeParse(data);
+  if (!parsed.success) {
+    return { error: "Validation failed", details: parsed.error.flatten() };
+  }
+
+  const { email, currentPassword, newPassword } = parsed.data;
+
+  const rate = rateLimit(
+    `admin-credentials:${session.adminId}`,
+    CREDENTIALS_RATE_LIMIT,
+    CREDENTIALS_WINDOW_MS
+  );
+  if (!rate.success) {
+    return { error: "Too many attempts. Please try again later." };
+  }
+
+  const admin = await db.adminUser.findUnique({
+    where: { id: session.adminId },
+  });
+
+  if (!admin || !admin.active) {
+    return { error: "Invalid session." };
+  }
+
+  const valid = await verifyPassword(currentPassword, admin.passwordHash);
+  if (!valid) {
+    return { error: "Current password is incorrect." };
+  }
+
+  const normalizedEmail = email.toLowerCase();
+
+  if (normalizedEmail !== admin.email) {
+    const existing = await db.adminUser.findUnique({
+      where: { email: normalizedEmail },
+    });
+    if (existing && existing.id !== admin.id) {
+      return { error: "That email is already in use by another admin." };
+    }
+  }
+
+  const dataToUpdate: { email: string; passwordHash?: string } = {
+    email: normalizedEmail,
+  };
+  if (newPassword) {
+    dataToUpdate.passwordHash = await hashPassword(newPassword);
+  }
+
+  try {
+    await db.adminUser.update({
+      where: { id: admin.id },
+      data: dataToUpdate,
+    });
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : "Failed to update credentials";
+    return { error: message };
+  }
+
+  await auditService.log({
+    adminId: admin.id,
+    action: "ADMIN_CREDENTIALS_UPDATED",
+    entityType: "AdminUser",
+    entityId: admin.id,
+    metadata: {
+      emailChanged: normalizedEmail !== admin.email,
+      passwordChanged: !!newPassword,
+    },
+  });
+
+  revalidatePath("/admin/settings");
+  return { success: true };
 }

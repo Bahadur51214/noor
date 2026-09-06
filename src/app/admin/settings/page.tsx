@@ -2,18 +2,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GeneralSettingsForm } from "@/components/admin/settings/general-settings-form";
 import { ShippingSettingsForm } from "@/components/admin/settings/shipping-settings-form";
 import { PaymentSettingsForm } from "@/components/admin/settings/payment-settings-form";
+import { AccountSettingsForm } from "@/components/admin/settings/account-settings-form";
 import { SettingsForm } from "@/components/admin/settings/settings-form";
 import { settingsService } from "@/services/settings.service";
 import { requireAuth } from "@/lib/auth";
+import { db } from "@/lib/db";
 
 export default async function SettingsPage() {
-  await requireAuth();
+  const session = await requireAuth();
 
   const [generalData, shippingData, paymentData] = await Promise.all([
     settingsService.getByGroup("store"),
     settingsService.getByGroup("shipping"),
     settingsService.getByGroup("payment"),
   ]);
+
+  const admin = await db.adminUser.findUnique({
+    where: { id: session.adminId },
+    select: { email: true },
+  });
 
   return (
     <div className="p-6">
@@ -26,6 +33,7 @@ export default async function SettingsPage() {
           <TabsTrigger value="homepage">Homepage</TabsTrigger>
           <TabsTrigger value="social">Social</TabsTrigger>
           <TabsTrigger value="policies">Policies</TabsTrigger>
+          <TabsTrigger value="account">Account</TabsTrigger>
         </TabsList>
         <TabsContent value="general">
           <div className="max-w-xl p-4 bg-white rounded-md border border-gray-100 shadow-sm">
@@ -86,6 +94,11 @@ export default async function SettingsPage() {
                 { key: "terms", label: "Terms of Service", type: "textarea", placeholder: "Terms content..." },
               ]}
             />
+          </div>
+        </TabsContent>
+        <TabsContent value="account">
+          <div className="max-w-xl p-4 bg-white rounded-md border border-gray-100 shadow-sm">
+            <AccountSettingsForm email={admin?.email || ""} />
           </div>
         </TabsContent>
       </Tabs>
