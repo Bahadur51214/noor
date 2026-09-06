@@ -29,9 +29,8 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const [featuredProducts, newArrivals, bestSellers, heroImageSetting] = await Promise.all([
+  const [featuredProducts, bestSellers, heroImageSetting] = await Promise.all([
     productService.getFeatured(4),
-    productService.getNewArrivals(4),
     productService.getBestSellers(4),
     settingsService.get("heroImage"),
   ])
@@ -41,9 +40,32 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Hero initialImage={heroImage} />
-      
+
+      {/* Best Sellers */}
+      {bestSellers.length > 0 && (
+        <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
+          <div className="flex flex-col items-center text-center mb-12">
+            <h2 className="text-3xl font-serif text-[#0D0D0D] mb-4">Best Sellers</h2>
+            <p className="text-gray-500 max-w-2xl">The pieces our customers love the most.</p>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {bestSellers.map((product) => (
+              <ProductCard key={product.id} product={product as any} />
+            ))}
+          </div>
+
+          <div className="flex justify-center mt-12">
+            <Button asChild variant="outline" className="rounded-none border-[#0D0D0D] text-[#0D0D0D] hover:bg-[#0D0D0D] hover:text-white px-8">
+              <Link href="/shop?bestSeller=true">Shop Best Sellers</Link>
+            </Button>
+          </div>
+        </section>
+      )}
+
       {/* Featured Watches */}
-      <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
+      {featuredProducts.length > 0 && (
+      <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto w-full bg-[#F7F4EF]">
         <div className="flex items-end justify-between mb-10">
           <div>
             <h2 className="text-3xl font-serif text-[#0D0D0D] mb-2">Featured Collection</h2>
@@ -54,34 +76,13 @@ export default async function HomePage() {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {featuredProducts.map((product) => (
             <ProductCard key={product.id} product={product as any} />
           ))}
         </div>
       </section>
-
-      {/* New Arrivals */}
-      <section className="py-20 px-4 md:px-8 w-full bg-[#F7F4EF]">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center text-center mb-12">
-            <h2 className="text-3xl font-serif text-[#0D0D0D] mb-4">New Arrivals</h2>
-            <p className="text-gray-500 max-w-2xl">Discover our latest timepieces, crafted with precision and elegance.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {newArrivals.map((product) => (
-              <ProductCard key={product.id} product={product as any} />
-            ))}
-          </div>
-          
-          <div className="flex justify-center mt-12">
-            <Button asChild variant="outline" className="rounded-none border-[#0D0D0D] text-[#0D0D0D] hover:bg-[#0D0D0D] hover:text-white px-8">
-              <Link href="/shop?sort=newest">Shop New Arrivals</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      )}
 
       {/* Brand Story */}
       <section className="py-24 px-4 md:px-8 bg-[#0D0D0D] text-white text-center">
@@ -96,20 +97,6 @@ export default async function HomePage() {
           <Button asChild className="bg-[#C9A96E] hover:bg-[#b0925c] text-white rounded-none px-8 py-6 uppercase tracking-widest text-sm">
             <Link href="/about">Discover NOOR</Link>
           </Button>
-        </div>
-      </section>
-
-      {/* Best Sellers */}
-      <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
-         <div className="flex flex-col items-center text-center mb-12">
-          <h2 className="text-3xl font-serif text-[#0D0D0D] mb-4">Best Sellers</h2>
-          <p className="text-gray-500 max-w-2xl">The pieces our customers love the most.</p>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {bestSellers.map((product) => (
-            <ProductCard key={product.id} product={product as any} />
-          ))}
         </div>
       </section>
     </div>

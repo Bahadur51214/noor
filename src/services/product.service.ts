@@ -40,6 +40,8 @@ export const productService = {
       ...(params.status ? { status: params.status } : { status: 'ACTIVE' }),
       ...(params.categorySlug ? { category: { slug: params.categorySlug } } : {}),
       ...(params.featured !== undefined ? { featured: params.featured } : {}),
+      ...(params.bestSeller !== undefined ? { bestSeller: params.bestSeller } : {}),
+      ...(params.newArrival !== undefined ? { newArrival: params.newArrival } : {}),
       ...(params.search ? { name: { contains: params.search, mode: 'insensitive' } } : {}),
     }
 

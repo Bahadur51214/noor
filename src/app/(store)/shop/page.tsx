@@ -44,12 +44,18 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const sort = typeof resolvedParams.sort === 'string' ? resolvedParams.sort as any : 'newest'
   const categorySlug = typeof resolvedParams.category === 'string' ? resolvedParams.category : undefined
   const search = typeof resolvedParams.search === 'string' ? resolvedParams.search : undefined
+  const featured = typeof resolvedParams.featured === 'string' && resolvedParams.featured !== 'false'
+  const bestSeller = typeof resolvedParams.bestSeller === 'string' && resolvedParams.bestSeller !== 'false'
+  const newArrival = typeof resolvedParams.newArrival === 'string' && resolvedParams.newArrival !== 'false'
   
   const { products, total, pages } = await productService.getAll({
     page,
     limit,
     sort,
     categorySlug,
+    featured,
+    bestSeller,
+    newArrival,
     search
   })
 

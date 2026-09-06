@@ -53,7 +53,7 @@ export function ProductCard({ product }: ProductCardProps) {
       transition={{ duration: 0.5 }}
       className="group flex flex-col gap-4"
     >
-      <Link href={`/product/${product.slug}`} className="relative aspect-[4/5] overflow-hidden bg-[#F7F4EF] rounded-sm block">
+      <Link href={`/product/${product.slug}`} className="relative aspect-square overflow-hidden bg-[#F7F4EF] rounded-lg block">
         <Image
           src={product.images[0]?.url || "/placeholder.svg"}
           alt={product.images[0]?.alt || product.name}
