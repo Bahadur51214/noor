@@ -5,23 +5,34 @@ const db = new PrismaClient();
 
 async function main() {
   // ---- Initial Admin User ----
-  // Login at /admin/login. Credentials are hashed via bcrypt (never plain text).
-  const adminEmail = "admin@noorwatches.com";
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD || "Alikhan@786";
-  const passwordHash = await bcrypt.hash(adminPassword, 12);
+  // Credentials come ONLY from environment variables — never hardcoded.
+  // If SEED_ADMIN_PASSWORD is not set, the existing admin user is left untouched.
+  const adminEmail = process.env.SEED_ADMIN_EMAIL || "admin@noorwatches.com";
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
 
-  await db.adminUser.upsert({
-    where: { email: adminEmail },
-    update: { name: "Super Admin", role: AdminRole.SUPER_ADMIN, active: true },
-    create: {
-      email: adminEmail,
-      name: "Super Admin",
-      passwordHash,
-      role: AdminRole.SUPER_ADMIN,
-      active: true,
-    },
-  });
-  console.log(`✔ Admin user ready: ${adminEmail}`);
+  if (adminPassword) {
+    const passwordHash = await bcrypt.hash(adminPassword, 12);
+
+    await db.adminUser.upsert({
+      where: { email: adminEmail },
+      update: {
+        name: "Super Admin",
+        role: AdminRole.SUPER_ADMIN,
+        active: true,
+        passwordHash,
+      },
+      create: {
+        email: adminEmail,
+        name: "Super Admin",
+        passwordHash,
+        role: AdminRole.SUPER_ADMIN,
+        active: true,
+      },
+    });
+    console.log(`✔ Admin user ready: ${adminEmail} (password refreshed from env)`);
+  } else {
+    console.log("⚠ SEED_ADMIN_PASSWORD not set — skipping admin upsert (existing admin unchanged).");
+  }
 
   // ---- Essential Store Settings ----
   // Delivery fee keys are read directly by the order service at checkout.
