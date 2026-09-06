@@ -22,7 +22,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { Form, FormControl, FormField, FormItem, FormMessage, useFormField } from '@/components/ui/form'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Minus, Plus, Trash2 } from 'lucide-react'
 
 function FieldLabel({ children }: { children: ReactNode }) {
   const { formItemId } = useFormField()
@@ -65,7 +65,7 @@ function PaymentDetails({ text, fallback }: { text: string; fallback: string }) 
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { items, getSubtotal, clearCart } = useCart()
+  const { items, getSubtotal, clearCart, updateQuantity, removeItem } = useCart()
   const [mounted, setMounted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [codDeliveryFee, setCodDeliveryFee] = useState(250)
@@ -434,6 +434,34 @@ export default function CheckoutPage() {
                   <div className="flex-1">
                     <h3 className="font-medium text-sm leading-tight">{item.name}</h3>
                     <p className="text-xs text-gray-500 mt-1">Rs. {(item.salePrice ?? item.price).toLocaleString()}</p>
+                    <div className="flex items-center gap-1 mt-2">
+                      <button
+                        type="button"
+                        aria-label={`Decrease quantity of ${item.name}`}
+                        onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                        className="w-6 h-6 border rounded-sm flex items-center justify-center hover:bg-gray-100"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <span className="w-6 text-center text-xs font-medium">{item.quantity}</span>
+                      <button
+                        type="button"
+                        aria-label={`Increase quantity of ${item.name}`}
+                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                        disabled={item.quantity >= item.stock}
+                        className="w-6 h-6 border rounded-sm flex items-center justify-center hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Remove ${item.name} from order`}
+                        onClick={() => removeItem(item.productId)}
+                        className="text-xs text-red-500 hover:text-red-700 ml-2 flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3 h-3" /> Remove
+                      </button>
+                    </div>
                   </div>
                   <div className="font-medium text-sm">
                     Rs. {((item.salePrice ?? item.price) * item.quantity).toLocaleString()}
