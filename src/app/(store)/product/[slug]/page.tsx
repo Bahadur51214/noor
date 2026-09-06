@@ -28,7 +28,6 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     description:
       product.seoDescription ||
       product.shortDescription ||
-      product.description ||
       `Buy ${product.name} at NOOR`,
     alternates: { canonical: `/product/${product.slug}` },
     openGraph: {
@@ -36,7 +35,6 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       description:
         product.seoDescription ||
         product.shortDescription ||
-        product.description ||
         `Buy ${product.name} at NOOR`,
       url: `/product/${product.slug}`,
       type: 'website',
@@ -63,12 +61,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://noorwatches.com'
 
   const isSale = !!product.salePrice
+  const structuredDescription =
+    product.shortDescription || product.seoDescription || product.name
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    description: product.description || undefined,
+    description: structuredDescription,
     sku: product.sku || undefined,
     image: product.images[0]?.url || undefined,
     brand: { '@type': 'Brand', name: 'NOOR' },

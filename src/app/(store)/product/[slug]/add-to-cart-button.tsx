@@ -19,7 +19,7 @@ interface AddToCartButtonProps {
 }
 
 export function AddToCartButton({ product }: AddToCartButtonProps) {
-  const { addItem, clearCart } = useCart()
+  const { addItem } = useCart()
   const router = useRouter()
 
   const cartItem = {
@@ -38,7 +38,6 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
   }
 
   const handleBuyNow = () => {
-    clearCart()
     addItem(cartItem, false)
     toast.success(`${product.name} added to cart`)
     router.push("/checkout")

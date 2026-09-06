@@ -68,7 +68,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Quick Add */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 ease-out">
           <Button 
             onClick={handleAddToCart}
             disabled={product.stock <= 0}

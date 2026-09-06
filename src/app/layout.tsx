@@ -47,7 +47,7 @@ export const metadata: Metadata = {
       "Elegant watches designed to complement every moment. Shop online across Pakistan.",
     images: [
       {
-        url: "/images/og-image.svg",
+        url: "/images/og-image.png",
         width: 1200,
         height: 630,
         alt: "NOOR — Premium Women's Watches",
@@ -59,6 +59,7 @@ export const metadata: Metadata = {
     title: "NOOR — Premium Women's Watches",
     description:
       "Elegant watches designed to complement every moment. Shop online across Pakistan.",
+    images: ["/images/og-image.png"],
   },
   robots: {
     index: true,
@@ -94,7 +95,9 @@ export default function RootLayout({
               url: process.env.NEXT_PUBLIC_APP_URL || "https://noorwatches.com",
               description:
                 "Discover NOOR's collection of elegant women's watches. Premium timepieces delivered across Pakistan with Cash on Delivery or Advance Payment.",
-              image: "/images/og-image.svg",
+              image:
+                (process.env.NEXT_PUBLIC_APP_URL || "https://noorwatches.com") +
+                "/images/og-image.png",
               sameAs: [],
               potentialAction: {
                 "@type": "SearchAction",
